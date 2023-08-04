@@ -43,9 +43,10 @@ find_library(MATHNEON_LIB REQUIRED
 
 ####################################
 
-set(ENABLE_PYTORCH_FRONTEND OFF CACHE BOOL "ENABLE_PYTORCH_FRONTEND" FORCE)
+set(ENABLE_PYTORCH_FRONTEND OFF CACHE BOOL "ENABLE_PYTORCH_FRONTEND")
 
 if(ENABLE_PYTORCH_FRONTEND)
+    message(STATUS "Enabling PyTorch frontend")
     add_compile_definitions(ENABLE_PYTORCH_FRONTEND)
     # find pytorch
     # -DCMAKE_PREFIX_PATH=/absolute/path/to/libtorch

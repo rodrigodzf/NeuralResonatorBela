@@ -4,8 +4,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <csignal>
-#include <cxxopts.hpp>
 
+#include "cxxopts.hpp"
 #include "AppOptions.h"
 
 // Handle Ctrl-C by requesting that the audio rendering stop
@@ -24,6 +24,7 @@ AppOptions parseOptions(int argc, char *argv[])
 
     options.add_options()
         ("audiofile", "Audio file to read", cxxopts::value<std::string>())
+        ("modelPath", "Path to model file", cxxopts::value<std::string>())
         ("h,help", "Print usage")
     ;
 
@@ -41,6 +42,21 @@ AppOptions parseOptions(int argc, char *argv[])
     {
         opts.audioFile = result["audiofile"].as<std::string>();
     }
+    else 
+    {
+        fprintf(stderr, "Error: no audio file specified\n");
+        exit(1);    
+    }
+
+    if (result.count("modelPath"))
+    {
+        opts.modelPath = result["modelPath"].as<std::string>();
+    }
+    else 
+    {
+        fprintf(stderr, "Error: no model file specified\n");
+        exit(1);    
+    }
 
     return opts;
 }
@@ -49,7 +65,6 @@ int main(int argc, char *argv[])
 {
     // Parse command-line options
     AppOptions opts = parseOptions(argc, argv);
-
     BelaInitSettings *settings = Bela_InitSettings_alloc();
 
     // Set default settings

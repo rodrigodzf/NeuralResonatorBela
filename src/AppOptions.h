@@ -5,4 +5,5 @@
 struct AppOptions
 {
     std::string modelPath = "";
+    std::string audioFile = "";
 };

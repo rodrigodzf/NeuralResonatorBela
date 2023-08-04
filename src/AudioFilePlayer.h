@@ -19,6 +19,7 @@ public:
 
         // Load file
         m_samples = AudioFileUtilities::loadMono(filename.c_str());
+        reset_read_index();
     }
 
     void reset_read_index()
