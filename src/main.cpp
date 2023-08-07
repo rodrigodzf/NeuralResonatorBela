@@ -73,6 +73,9 @@ int main(int argc, char *argv[])
     settings->render = render;
     settings->cleanup = cleanup;
 
+    // Set the project name for use in the GUI
+    settings->projectName = strrchr(argv[0], '/') + 1;
+
     // Initialise the PRU audio device
     // Run with 16Khz by default
     if (Bela_initAudio(settings, &opts, 48000.0, 3.0) != 0)

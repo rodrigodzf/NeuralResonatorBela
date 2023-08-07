@@ -13,4 +13,9 @@ echo "Copying files to Bela"
 rsync \
 --timeout=10 \
 -avzP build/bin/NeuralResonatorBela \
-root@192.168.7.2:~
+root@192.168.7.2:~/Bela/projects/NeuralResonatorBela
+
+rsync \
+--timeout=10 \
+-avzP js/sketch.js \
+root@192.168.7.2:~/Bela/projects/NeuralResonatorBela

@@ -80,14 +80,15 @@ double Filterbank::tick(double in)
     // for each filter
     for (int i = 0; i < mNumParallel; i++)
     {
+        double in_for_this_filter = in;
         // process through each biquad
         for (int j = 0; j < mNumBiquads; j++)
         {
-            in = mIIRFilters[i][j].process(in);
+            in_for_this_filter = mIIRFilters[i][j].process(in_for_this_filter);
         }
 
         // add to the output
-        out += in;
+        out += in_for_this_filter;
     }
 
     return out;

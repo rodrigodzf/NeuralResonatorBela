@@ -1,7 +1,16 @@
 #include "PytorchFrontend.h"
 
 PytorchFrontend::PytorchFrontend()
-{}
+{
+    // convert to torch tensor
+    options = torch::TensorOptions()
+        .dtype(torch::kFloat32)
+        .device(torch::kCPU)
+        .requires_grad(false);
+
+    coefficients.resize(32 * 2 * 6);
+
+}
 
 PytorchFrontend::~PytorchFrontend()
 {
