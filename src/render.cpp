@@ -36,12 +36,7 @@ std::vector<float> g_scaling;
 std::vector<float> g_coords;
 
 // debug
-bool run_1000 = true;
-int run_index = 0;
-std::vector<std::vector<float>> debug_mono_output;
 bool g_impulse = false;
-bool do_once = false;
-//! debug
 
 void initialize_parameters()
 {
@@ -271,12 +266,6 @@ bool setup(BelaContext *context, void *userData)
     filterbank = std::make_unique<Filterbank>();
     filterbank->setup(32, 1);
 
-    // pole = 0.99 * np.exp(1j * np.pi * 0.1)
-    // a = np.poly([pole, np.conj(pole)])
-    // filterbank->setCoefficients(
-    //     {0.1, 0.0, 0.0, 1.0, -1.93522916, 0.998001}
-    // );
-
     // Initialize Pytorch frontend
     nn = std::make_unique<PytorchFrontend>();
     if(!nn->load(options->modelPath))
@@ -302,7 +291,7 @@ bool setup(BelaContext *context, void *userData)
     gui->setControlDataCallback(gui_callback, nullptr);
 
     // Initialize the pipe
-    g_pipe.setup("gui_to_rt");
+    // g_pipe.setup("gui_to_rt");
     
     // Initialize default parameters
     initialize_parameters();
@@ -310,63 +299,18 @@ bool setup(BelaContext *context, void *userData)
     // Do the inference once to warm up the model
     Bela_scheduleAuxiliaryTask(gNNTask);
 
-    // Initialize debug output
-    debug_mono_output.resize(2);
-    debug_mono_output[0].resize(context->audioFrames * 1000);
-    debug_mono_output[1].resize(context->audioFrames * 1000);
-
     return true;
 }
 
 void render(BelaContext *context, void *userData)
 {
-    // if (run_1000)
-    // {
-    // Loop over each audio frame (multi-channel sample)
-
-    // std::vector<float> coefficients;
-    // bool new_coefficients = false;
-    // while(1 == g_pipe.readRt(coefficients))
-	// {
-    //     fprintf(stdout, "New coefficients received\n");
-    //     new_coefficients = true;
-    // }
-    // if (new_coefficients)
-    // {
-    //     for (int i = 0; i < 10; i++)
-    //     {
-    //         fprintf(stdout, "%f ", coefficients[i]);
-    //     }
-    //     // filterbank->setCoefficients(coefficients);
-    // }
-    //     // filterbank->setCoefficients(coefficients);
-    //     // print the first 10 coefficients and the last 10
-    //     // for (int i = 0; i < 10; i++)
-    //     // {
-    //     //     fprintf(stdout, "%f ", coefficients[i]);
-    //     // }
-    //     // fprintf(stdout, "\n");
-
-    //     // for (int i = coefficients.size() - 10; i < coefficients.size(); i++)
-    //     // {
-    //     //     fprintf(stdout, "%f ", coefficients[i]);
-    //     // }
-    //     // fprintf(stdout, "\n");
-
-	// 	// in case more than one came through, we only care about the
-	// 	// most recent
-	// 	continue;
-	// }
-
-
     for(unsigned int n = 0; n < context->audioFrames; n++)
     {
         float out = 0;
 
-        // out = player->tick();
         if (g_impulse)
         {
-            out = 0.9;
+            out = 0.2;
             g_impulse = false;
         }
 
@@ -376,51 +320,20 @@ void render(BelaContext *context, void *userData)
         for (unsigned int ch = 0; ch < context->audioOutChannels; ch++)
         {
             audioWrite(context, n, ch, out);
-            // debug_mono_output[ch][n + run_index * context->audioFrames] = out;
         }
     }
-
-    // do_once = false;
-
-        // if (run_index++ >= 999)
-        // {
-        //     run_1000 = false;
-        //     printf("Done!\n");
-        // }
-    // }
 
     // received new coefficients
     // we can probably do this also with pipes
     if (gNewCoefficients)
     {
-        fprintf(stdout, "New coefficients received\n");
         filterbank->setCoefficients(nn->coefficients);
-    //     // print the first 10 coefficients and the last 10
-    //     for (int i = 0; i < 10; i++)
-    //     {
-    //         fprintf(stdout, "%f ", nn->coefficients[i]);
-    //     }
-    //     fprintf(stdout, "\n");
-
-    //     for (int i = nn->coefficients.size() - 10; i < nn->coefficients.size(); i++)
-    //     {
-    //         fprintf(stdout, "%f ", nn->coefficients[i]);
-    //     }
-    //     fprintf(stdout, "\n");
-
         gNewCoefficients = false;
     }
 }
 
 void cleanup(BelaContext *context, void *userData)
 {
-    // Save the output to a file
-    AudioFileUtilities::write(
-        "debug_mono_output.wav",
-        debug_mono_output,
-        16000 // sample rate of the input file
-    );
-
     fprintf(stdout, "Exiting...\n");
     player.reset();
     filterbank.reset();
@@ -429,40 +342,7 @@ void cleanup(BelaContext *context, void *userData)
 
 void process_nn_background(void*)
 {
-    // TODO: here we need to read the GUI parameters and also the sensor data
-    // std::vector<float> material_params = {
-    //     0.07263158, 0.0014014, 0.74, -0.01724138, 0.1959799
-    // };
-
-
-
-
-    // g_points_x = {
-    //     0.8379998,  0.7519936,  0.6659874,  0.5799812,  0.49397498, 0.40796876,
-    //     0.32710645, 0.24999724, 0.17517596, 0.13158184, 0.09858637, 0.06559091,
-    //     0.03422932, 0.08377543, 0.1671142,  0.25045297, 0.3337917,  0.42014742,
-    //     0.5068236,  0.5934997,  0.6801759,  0.766852,   0.8354631,  0.88813186,
-    //     0.940648,   0.9626781,  0.97272366, 0.97465295, 0.97464085, 0.97305685,
-    //     0.924498,   0.8379998
-    // };
-
-    // g_points_y = {
-    //     0.81074345, 0.79867345, 0.7866034,  0.7745334,  0.7624634,  0.75039333,
-    //     0.71973205, 0.68017864, 0.6360818,  0.564928,   0.48459086, 0.40425372,
-    //     0.3232834,  0.28176603, 0.25732416, 0.2328823,  0.20844044, 0.20114243,
-    //     0.19566542, 0.1901884,  0.18471138, 0.17923436, 0.21753444, 0.28658152,
-    //     0.3557538,  0.43719634, 0.5234624,  0.610199,   0.697048,   0.7838793,
-    //     0.81854194, 0.81074345
-    // };
-
-    // print the first 10 points
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     printf("Point %f %f\n", g_points_x[i], g_points_y[i]);
-    // }
-
-
-
+  
     // points must be in the range [0, 1] range
     fft->fft_magnitude(
         g_points_x,
@@ -474,12 +354,6 @@ void process_nn_background(void*)
         std::end(fft->mag)
     );
 
-    // print the first 10 values of the magnitude
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     printf("FFT Mag %f\n", features[i]);
-    // }
-
     nn->process(
         features,
         g_coords
@@ -489,26 +363,6 @@ void process_nn_background(void*)
         g_scaling
     );
     
-    // write to the pipe
-    // g_pipe.writeNonRt(nn->coefficients);
-    
-    // std::vector<float> scaling = {
-    //     1.0F, // scale factor
-    //     15000.0F, // rho
-    //     8000000000.0F, // E
-    //     1.0F, // alpha
-    //     0.0000003F, // beta
-    //     1.0F / 32000.0F // sampling period
-    // };
-    // nn->scale(
-    //     scaling
-    // );
-
-    // print the first 20 values of the output
-    // for (int i = 0; i < 20; i++)
-    // {
-    //     printf("Output %f\n", nn->coefficients[i]);
-    // }
     gNewCoefficients = true;
 
 }
