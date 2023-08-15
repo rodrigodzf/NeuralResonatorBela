@@ -7,7 +7,6 @@
 #include <libraries/AudioFile/AudioFile.h>
 #include <libraries/Gui/Gui.h>
 
-#include "AudioFilePlayer.h"
 #include "Filterbank.h"
 #include "AppOptions.h"
 #include "ShapeFFT.h"
@@ -15,7 +14,6 @@
 #include <libraries/Pipe/Pipe.h>
 #include <vector>
 
-std::unique_ptr<AudioFilePlayer> player;
 std::unique_ptr<Filterbank> filterbank;
 std::unique_ptr<PytorchFrontend> nn;
 std::unique_ptr<ShapeFFT> fft;
@@ -259,9 +257,6 @@ bool setup(BelaContext *context, void *userData)
     fprintf(stdout, "Sample rate: %f\n", context->audioSampleRate);
     fprintf(stdout, "Project name: %s\n", context->projectName);
 
-    // Initialize player
-    player = std::make_unique<AudioFilePlayer>(options->audioFile);
-
     // Initialize filter
     filterbank = std::make_unique<Filterbank>();
     filterbank->setup(32, 1);
@@ -310,7 +305,7 @@ void render(BelaContext *context, void *userData)
 
         if (g_impulse)
         {
-            out = 0.2;
+            out = 0.9;
             g_impulse = false;
         }
 
@@ -335,7 +330,6 @@ void render(BelaContext *context, void *userData)
 void cleanup(BelaContext *context, void *userData)
 {
     fprintf(stdout, "Exiting...\n");
-    player.reset();
     filterbank.reset();
     nn.reset();
 }

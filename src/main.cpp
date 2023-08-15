@@ -23,7 +23,6 @@ AppOptions parseOptions(int argc, char *argv[])
     );
 
     options.add_options()
-        ("audiofile", "Audio file to read", cxxopts::value<std::string>())
         ("modelPath", "Path to model file", cxxopts::value<std::string>())
         ("h,help", "Print usage")
     ;
@@ -37,16 +36,6 @@ AppOptions parseOptions(int argc, char *argv[])
 
     // create a new AppOptions object
     AppOptions opts;
-
-    if (result.count("audiofile"))
-    {
-        opts.audioFile = result["audiofile"].as<std::string>();
-    }
-    else 
-    {
-        fprintf(stderr, "Error: no audio file specified\n");
-        exit(1);    
-    }
 
     if (result.count("modelPath"))
     {

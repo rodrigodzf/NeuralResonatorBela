@@ -3,17 +3,13 @@
 {
     "name": "xc-bela",
     "image": "rodrigodzf/xc-bela:latest",
-    "workspaceFolder": "/workspace",
     "runArgs": [
-        "--env-file",
-        ".devcontainer/devcontainer.env",
-        "--network",
-        "host",
+        "--env-file", ".devcontainer/devcontainer.env",
+        "--network", "host",
         "--cap-add=SYS_PTRACE",
         "--security-opt",
         "seccomp=unconfined"
     ],
-    "workspaceMount": "source=xc-bela-src,target=/workspace,type=volume",
     "mounts": [
         "source=xc-bela-extensions,target=/root/.vscode-server/extensions,type=volume",
         "source=xc-bela-bashhistory,target=/commandhistory,type=volume"
