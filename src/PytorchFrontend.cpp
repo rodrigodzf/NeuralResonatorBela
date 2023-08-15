@@ -8,8 +8,10 @@ PytorchFrontend::PytorchFrontend()
         .device(torch::kCPU)
         .requires_grad(false);
 
-    coefficients.resize(32 * 2 * 6);
+    coefficients.resize(32 * 1 * 6);
 
+    // Set up the scaling inputs
+    scaling_inputs.resize(8);
 }
 
 PytorchFrontend::~PytorchFrontend()

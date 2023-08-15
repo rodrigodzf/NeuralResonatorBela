@@ -26,6 +26,9 @@ private:
     void printDebug();
     torch::TensorOptions options;
 
+    std::vector<torch::jit::IValue> scaling_inputs;
+
+
 public:
     std::vector<float> coefficients;
 
@@ -35,15 +38,61 @@ public:
 
     bool load(const std::string &filename);
 
+    bool scale(
+        const std::vector<float> &scaling
+    )
+    {
+        scaling_inputs[2] = scaling[0]; // physical size
+        scaling_inputs[3] = scaling[1]; // rho
+        scaling_inputs[4] = scaling[2]; // E
+        scaling_inputs[5] = scaling[3]; // alpha
+        scaling_inputs[6] = scaling[4]; // beta
+        scaling_inputs[7] = scaling[5]; // sample period
+
+        auto ba = mModule.get_method("scale")(
+            scaling_inputs
+        ).toTensor();
+
+        std::memcpy(
+            coefficients.data(),
+            ba.data_ptr(),
+            ba.numel() * sizeof(float)
+        );
+
+        return true;
+    };
+
     template <typename T>
     bool process(
         std::vector<T> &feature_vector,
-        std::vector<T> &coords_vector,
-        std::vector<T> &materials_vector
+        std::vector<T> &coords_vector
     )
     {
         c10::InferenceMode guard;
 
+        torch::Tensor geometrical_features = torch::from_blob(
+            feature_vector.data(),
+            {1, feature_vector.size()},
+            options
+        );
+
+        torch::Tensor coords = torch::from_blob(
+            coords_vector.data(),
+            {1, 2},
+            options
+        );
+
+        std::vector<torch::jit::IValue> inputs;
+        inputs.push_back(geometrical_features);
+        inputs.push_back(coords);
+        
+        auto gains_theta = mModule.forward(inputs).toTuple()->elements();
+
+        scaling_inputs[0] = gains_theta[0].toTensor();
+        scaling_inputs[1] = gains_theta[1].toTensor();
+        
+        return true;
+#if 0
         torch::Tensor feature_tensor = torch::from_blob(
             feature_vector.data(),
             {1, 32},
@@ -96,5 +145,6 @@ public:
         );
 
         return true;
+#endif
     }
 };

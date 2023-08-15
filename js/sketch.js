@@ -137,92 +137,85 @@ function generateVertices(n_vertices, n_samples) {
     // add last point 
     points.push(points[0])
     interpolated_points = interpolateLineRange(points, n_samples)
-    
+
     // add 0.5 to each point
     interpolated_points = interpolated_points.map((p) => {
-        return {x: p.x + 0.5, y: p.y + 0.5}
+        return { x: p.x + 0.5, y: p.y + 0.5 }
     })
-    
+
     // this excludes the last point
     // interpolated_points.pop()
     return interpolated_points
 }
 
 const default_n_vertices = 13
-const default_n_samples = 32
+const default_n_samples = 64
 const pixel_multiplier = 200
+const scaling_parameters = {
+    size: 1,
+    rho: 1500,
+    E: 0.5,
+    alpha: 0,
+    beta: 0.1
+};
+const coordinates = {
+    x: 0.5,
+    y: 0.5,
+}
+
+const buttons = {
+    generate_mesh: () => {
+        g_vertices = generateVertices(
+            default_n_vertices,
+            default_n_samples
+        )
+        Bela.control.send({ vertices: g_vertices });
+    },
+    hit: () => {
+        Bela.control.send({ hit: true });
+    }
+};
+
 g_vertices = []
+
 function setup() {
 
     //Create a canvas of dimensions given by current browser window
     canvas_dimensions = [windowWidth, windowHeight];
     createCanvas(canvas_dimensions[0], canvas_dimensions[1]);
 
-    //Text
-    p1 = createP("Density:");
-    p1.position(
-        windowWidth / 3,
-        windowHeight / 1.5
-    );
+    gui = new dat.GUI({ name: "Parameters", width: 300 });
 
-    // Slider
-    fSlider = createSlider(
-        0,
-        100,
-        1
-    );
-
-    fSlider.input(() => {
-        obj = {
-            rho: fSlider.value()
-        };
-        console.log("Sending ", obj);
-        Bela.control.send(obj);
+    scaling_folder = gui.addFolder("Scaling Parameters")
+    scaling_folder.add(scaling_parameters, 'size', 0.1, 10).onChange((value) => {
+        Bela.control.send({ size: value });
+    });
+    scaling_folder.add(scaling_parameters, 'rho', 1000, 15000).onChange((value) => {
+        Bela.control.send({ rho: value });
+    });
+    scaling_folder.add(scaling_parameters, 'E', 0.0, 1.0).step(0.01).onChange((value) => {
+        mapped = map(value, 0.0, 1, 1e+9, 1e+11)
+        Bela.control.send({ E: mapped });
+    });
+    scaling_folder.add(scaling_parameters, 'alpha', 0.0, 1.0).step(0.01).onChange((value) => {
+        mapped = map(value, 0.0, 1, 0, 5)
+        Bela.control.send({ alpha: mapped });
+    });
+    scaling_folder.add(scaling_parameters, 'beta', 0.0, 1.0).step(0.01).onChange((value) => {
+        mapped = map(value, 0.0, 1, 1e-8, 1e-6)
+        Bela.control.send({ beta: mapped });
     });
 
-    fSlider.position(
-        p1.x + p1.size().width,
-        p1.y + p1.size().height * 0.8
-    );
+    coordinates_folder = gui.addFolder("Coordinates")
 
-    // vertex generate button
-    generate_mesh_btn = createButton('Generate Mesh');
-    generate_mesh_btn.position(
-        p1.x + p1.size().width,
-        p1.y + p1.size().height + 50
-    )
-    generate_mesh_btn.mousePressed(() => {
-        g_vertices = generateVertices(
-            default_n_vertices,
-            default_n_samples
-        )
-      
-        obj = {
-            // add 0.5 to vertices to be in range [0, 1]
-            vertices: g_vertices
-        };
-      
-        // print(g_vertices)
-        // print(Math.max(...g_vertices.map(o => o.x)))
-        // print(Math.min(...g_vertices.map(o => o.x)))
-        // print(Math.max(...g_vertices.map(o => o.y)))
-        // print(Math.min(...g_vertices.map(o => o.y)))
-        Bela.control.send(obj);
-    })
+    changed_coords = () => {
+        Bela.control.send({ coords: { x: coordinates.x, y: coordinates.y} });
+    }
+    coordinates_folder.add(coordinates, 'x', 0.0, 1.0).step(0.01).onChange(changed_coords)
+    coordinates_folder.add(coordinates, 'y', 0.0, 1.0).step(0.01).onChange(changed_coords)
 
-    // impulse button
-    generate_mesh_btn = createButton('Hit');
-    generate_mesh_btn.position(
-        p1.x + p1.size().width,
-        p1.y + p1.size().height + 75
-    )
-    generate_mesh_btn.mousePressed(() => {
-        obj = {
-            // add 0.5 to vertices to be in range [0, 1]
-            hit: true
-        };
-        Bela.control.send(obj);
-    })
+    gui.add(buttons, 'generate_mesh').name("Generate Mesh")
+    gui.add(buttons, 'hit').name("Hit!")
 
     // generate default vertices
     g_vertices = generateVertices(
@@ -252,14 +245,12 @@ function draw() {
         vertex(g_vertices[i].x * pixel_multiplier, g_vertices[i].y * pixel_multiplier);
     }
     endShape();
-  
+
     stroke('#F4F78E');
     strokeWeight(10);
     for (let i = 0; i < g_vertices.length; i++) {
-      
-        
         point(g_vertices[i].x * pixel_multiplier, g_vertices[i].y * pixel_multiplier);
-        
+
     }
 
 }

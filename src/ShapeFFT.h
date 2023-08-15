@@ -5,7 +5,7 @@
 #include <cmath>
 #include <libraries/ne10/NE10.h> // NEON FFT library
 
-#define SAMPLES 32
+#define SAMPLES 64
 using FixedPointsArray = std::array<double, SAMPLES>;
 
 class ShapeFFT
