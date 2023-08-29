@@ -14,3 +14,9 @@ npm run preview
 npm install --include=dev
 npm run dev
 ```
+
+And before committing please 💁
+
+```bash
+npm run lint
+```
