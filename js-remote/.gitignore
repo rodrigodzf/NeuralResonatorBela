@@ -1,0 +1,13 @@
+# project
+/unused
+todo.md
+
+# dependencies
+/node_modules
+
+# production
+/dist
+
+# misc
+/.vscode
+.DS_Store
