@@ -21,6 +21,26 @@ cmake --build build -j
 
 echo "Copying files to Bela"
 
+# Copy the prebuild Bela libraries 
+# These libraries are generated when
+# the Bela libs are compiled for the image
+# However, to minimize the effort of 
+# compiling them again we just copy them here
+# These will only work with the same Bela image
+# that was used to build the current image
+rsync \
+--timeout=10 \
+-avzP \
+/sysroot/root/Bela/lib/* \
+root@192.168.7.2:/root/Bela/lib
+
+# Copy the pytorch files
+rsync \
+--timeout=10 \
+-vzP \
+/opt/pytorch-install/lib/* \
+root@192.168.7.2:/root/lib
+
 rsync \
 --timeout=10 \
 -avzP build/bin/NeuralResonatorBela \
