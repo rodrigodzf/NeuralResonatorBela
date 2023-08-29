@@ -27,17 +27,12 @@ export default function App(): JSX.Element {
 
 	return (
 		<>
-			{/* {true ? ( */}
 			{belaLoaded ? (
 				<Drum
 					N={10} // will add controls for this later
 					// onPolygonChange={(P: Polygon) => console.log(`Polygon changed: ${P}`)}
 					onPolygonChange={(P: Polygon) => {
-						console.log(P)
-						console.log(P.length)
 					    P = interpolateLineRange(P, 64)
-						console.log(P)
-						console.log(P.length)
 						Bela.sendBuffer(0, 'float', P.map((p: Point) => [p.x, p.y]).flat())
 					}}
 					// onStrikeChange={(p: Point) => console.log(`Polygon changed: ${p}`)}
