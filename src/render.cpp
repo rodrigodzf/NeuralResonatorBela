@@ -27,6 +27,7 @@ bool gNewCoefficients = false;
 
 // GUI
 std::unique_ptr<Gui> gui;
+float gPolygonChanged = 0.0;
 
 // Communcation
 Pipe g_pipe;
@@ -36,18 +37,14 @@ std::vector<float> g_scaling;
 std::vector<float> g_coords;
 
 bool once_every_n_blocks = true;
-int n_blocks = 200; // 100ms -> 32000 / 16 = 2000 = 1 second
+int n_blocks = 200;	   // 100ms -> 32000 / 16 = 2000 = 1 second
 int block_counter = 0;
-
-// debug
-bool g_impulse = false;
 
 // analog frames
 int gAudioFramesPerAnalogFrame = 0;
 
-void initialize_parameters()
-{
-    // Initialize default parameters
+void initialize_parameters() {
+	// Initialize default parameters
 
 	g_scaling = {
 		1.0F,			   // scale factor
@@ -131,97 +128,91 @@ bool retrieve_points(
 	return ret;
 }
 
-bool gui_callback(JSONObject& json, void*) {
-	if (json.find(JSON::s2ws("size")) != json.end()) {
-		auto param = retrieveAsNumber(json, "size");
-		g_scaling[0] = static_cast<float>(param);	 // physical size
+// bool gui_callback(JSONObject& json, void*) {
+// 	if (json.find(JSON::s2ws("size")) != json.end()) {
+// 		auto param = retrieveAsNumber(json, "size");
+// 		g_scaling[0] = static_cast<float>(param);	 // physical size
 
-        nn->scale(
-            g_scaling
-        );
-        
-        gNewCoefficients = true;
-    }
-    else if (json.find(JSON::s2ws("rho")) != json.end())
-    {
-        // auto param = retrieveAsNumber(json, "rho");
-        // g_scaling[1] = static_cast<float>(param); // rho
+// 		nn->scale(g_scaling);
 
-        // the scaling is very fast, so we can do it in the gui thread
-        // nn->scale(
-            // g_scaling
-        // );
-        
-        // write to the pipe
-        // g_pipe.writeNonRt(nn->coefficients);
-        // gNewCoefficients = true;
-        // fprintf(stdout, "Received rho: %f\n", rho);
-    }
-    else if (json.find(JSON::s2ws("E")) != json.end())
-    {
-        auto param = retrieveAsNumber(json, "E");
-        g_scaling[2] = static_cast<float>(param); // E
+// 		gNewCoefficients = true;
+// 	} else if (json.find(JSON::s2ws("rho")) != json.end()) {
+// 		// auto param = retrieveAsNumber(json, "rho");
+// 		// g_scaling[1] = static_cast<float>(param); // rho
 
-		// the scaling is very fast, so we can do it in the gui thread
-		nn->scale(g_scaling);
+// 		// the scaling is very fast, so we can do it in the gui thread
+// 		// nn->scale(
+// 		// g_scaling
+// 		// );
 
-		// write to the pipe
-		// g_pipe.writeNonRt(nn->coefficients);
-		gNewCoefficients = true;
-		// fprintf(stdout, "Received rho: %f\n", rho);
-	} else if (json.find(JSON::s2ws("E")) != json.end()) {
-		auto param = retrieveAsNumber(json, "E");
-		g_scaling[2] = static_cast<float>(param);	 // E
+// 		// write to the pipe
+// 		// g_pipe.writeNonRt(nn->coefficients);
+// 		// gNewCoefficients = true;
+// 		// fprintf(stdout, "Received rho: %f\n", rho);
+// 	} else if (json.find(JSON::s2ws("E")) != json.end()) {
+// 		auto param = retrieveAsNumber(json, "E");
+// 		g_scaling[2] = static_cast<float>(param);	 // E
 
-		nn->scale(g_scaling);
+// 		// the scaling is very fast, so we can do it in the gui thread
+// 		nn->scale(g_scaling);
 
-		gNewCoefficients = true;
-	}
+// 		// write to the pipe
+// 		// g_pipe.writeNonRt(nn->coefficients);
+// 		gNewCoefficients = true;
+// 		// fprintf(stdout, "Received rho: %f\n", rho);
+// 	} else if (json.find(JSON::s2ws("E")) != json.end()) {
+// 		auto param = retrieveAsNumber(json, "E");
+// 		g_scaling[2] = static_cast<float>(param);	 // E
 
-	else if (json.find(JSON::s2ws("alpha")) != json.end()) {
-		auto param = retrieveAsNumber(json, "alpha");
-		g_scaling[3] = static_cast<float>(param);	 // alpha
+// 		nn->scale(g_scaling);
 
-		nn->scale(g_scaling);
+// 		gNewCoefficients = true;
+// 	}
 
-		gNewCoefficients = true;
-	} else if (json.find(JSON::s2ws("beta")) != json.end()) {
-		auto param = retrieveAsNumber(json, "beta");
-		g_scaling[4] = static_cast<float>(param);	 // beta
+// 	else if (json.find(JSON::s2ws("alpha")) != json.end()) {
+// 		auto param = retrieveAsNumber(json, "alpha");
+// 		g_scaling[3] = static_cast<float>(param);	 // alpha
 
-		nn->scale(g_scaling);
+// 		nn->scale(g_scaling);
 
-		gNewCoefficients = true;
-	} else if (json.find(JSON::s2ws("coords")) != json.end()) {
-		if (json[JSON::s2ws("coords")]->IsObject()) {
-			auto coords = json[JSON::s2ws("coords")]->AsObject();
-			auto x_wstr = JSON::s2ws("x");
-			auto y_wstr = JSON::s2ws("y");
-			if (coords[x_wstr]->IsNumber()) {
-				g_coords[0] = coords[x_wstr]->AsNumber();
-			}
+// 		gNewCoefficients = true;
+// 	} else if (json.find(JSON::s2ws("beta")) != json.end()) {
+// 		auto param = retrieveAsNumber(json, "beta");
+// 		g_scaling[4] = static_cast<float>(param);	 // beta
 
-			if (coords[y_wstr]->IsNumber()) {
-				g_coords[1] = coords[y_wstr]->AsNumber();
-			}
+// 		nn->scale(g_scaling);
 
-			// the inference is also fast but not fast enough
-			// we do it in the background
-			Bela_scheduleAuxiliaryTask(gNNTask);
-		}
-	} else if (json.find(JSON::s2ws("vertices")) != json.end()) {
-		if (retrieve_points(json, "vertices", g_points_x, g_points_y)) {
-			// the inference is also fast but not fast enough
-			// we do it in the background
-			Bela_scheduleAuxiliaryTask(gNNTask);
-		}
-	} else if (json.find(JSON::s2ws("hit")) != json.end()) {
-		g_impulse = true;
-		fprintf(stdout, "Received hit\n");
-	}
+// 		gNewCoefficients = true;
+// 	} else if (json.find(JSON::s2ws("coords")) != json.end()) {
+// 		if (json[JSON::s2ws("coords")]->IsObject()) {
+// 			auto coords = json[JSON::s2ws("coords")]->AsObject();
+// 			auto x_wstr = JSON::s2ws("x");
+// 			auto y_wstr = JSON::s2ws("y");
+// 			if (coords[x_wstr]->IsNumber()) {
+// 				g_coords[0] = coords[x_wstr]->AsNumber();
+// 			}
 
-	return false;
-}
+// 			if (coords[y_wstr]->IsNumber()) {
+// 				g_coords[1] = coords[y_wstr]->AsNumber();
+// 			}
+
+// 			// the inference is also fast but not fast enough
+// 			// we do it in the background
+// 			Bela_scheduleAuxiliaryTask(gNNTask);
+// 		}
+// 	} else if (json.find(JSON::s2ws("vertices")) != json.end()) {
+// 		if (retrieve_points(json, "vertices", g_points_x, g_points_y)) {
+// 			// the inference is also fast but not fast enough
+// 			// we do it in the background
+// 			Bela_scheduleAuxiliaryTask(gNNTask);
+// 		}
+// 	} else if (json.find(JSON::s2ws("hit")) != json.end()) {
+// 		g_impulse = true;
+// 		fprintf(stdout, "Received hit\n");
+// 	}
+
+// 	return false;
+// }
 
 bool setup(BelaContext* context, void* userData) {
 	// Get options
@@ -254,36 +245,34 @@ bool setup(BelaContext* context, void* userData) {
 		return false;
 	}
 
-	if(
-        (gScalingTask = Bela_createAuxiliaryTask(&process_scaling_background, 80, "process_scaling")) == 0
-    )
-    {
-        fprintf(stderr, "Error creating auxiliary task\n");
+	if ((gScalingTask =
+			 Bela_createAuxiliaryTask(&process_scaling_background, 80, "process_scaling"))
+		== 0) {
+		fprintf(stderr, "Error creating auxiliary task\n");
 		return false;
-    }
+	}
 
+	// Initialize the gui
+	// gui = std::make_unique<Gui>();
+	// gui->setup(context->projectName);
+	// gui->setControlDataCallback(gui_callback, nullptr);
+	gui = std::make_unique<Gui>();
+	gui->setup(context->projectName);
+	gui->setBuffer('f', 1);		 // Polygon Changes
+	gui->setBuffer('f', 128);	 // Polygon
+	gui->setBuffer('f', 2);		 // Point
 
-    // Initialize the gui
-    // gui = std::make_unique<Gui>();
-    // gui->setup(context->projectName);
-    // gui->setControlDataCallback(gui_callback, nullptr);
-    gui = std::make_unique<Gui>();
-    gui->setup(context->projectName);
-	gui->setBuffer('f', 128);			// Polygon
-	gui->setBuffer('f', 2);				// Point
-
-    // Initialize analog 
-	if(context->analogFrames)
-    {
+								 // Initialize analog
+	if (context->analogFrames) {
 		gAudioFramesPerAnalogFrame = context->audioFrames / context->analogFrames;
-        fprintf(stdout, "Audio Frames Per Analog Frame %d\n", gAudioFramesPerAnalogFrame);
-    }
+		fprintf(stdout, "Audio Frames Per Analog Frame %d\n", gAudioFramesPerAnalogFrame);
+	}
 
-    // Initialize the pipe
-    // g_pipe.setup("gui_to_rt");
-    
-    // Initialize default parameters
-    initialize_parameters();
+	// Initialize the pipe
+	// g_pipe.setup("gui_to_rt");
+
+	// Initialize default parameters
+	initialize_parameters();
 
 	// Initialize default parameters
 	initialize_parameters();
@@ -294,123 +283,134 @@ bool setup(BelaContext* context, void* userData) {
 	return true;
 }
 
-void render(BelaContext *context, void *userData)
-{
+void render(BelaContext* context, void* userData) {
 	float in_1;
 	float in_2;
 	float in_3;
 	float in_4;
 	float in_5;
-	float in_6;
-	float in_7;
-	float in_8;
+	// float in_6;
+	// float in_7;
+	// float in_8;
 
-    if ((++block_counter % n_blocks) == 0)
-    {
+	// update polygon
+	if (gPolygonChanged != gui->getDataBuffer(0).getAsFloat()[0]) {
+		gPolygonChanged = gui->getDataBuffer(0).getAsFloat()[0];
+		float* Polygon = gui->getDataBuffer(1).getAsFloat();
+		for (int i = 0; i < 128; i += 2) {
+			g_points_x[i / 2] = Polygon[i];
+			g_points_y[i / 2] = Polygon[i + 1];
+		}
+		Bela_scheduleAuxiliaryTask(gNNTask);
+		// rt_printf("x1 %f \n", Polygon[0]);
+		// rt_printf("y1 %f \n", Polygon[1]);
+		// rt_printf("x2 %f \n", Polygon[2]);
+		// rt_printf("y2 %f \n", Polygon[3]);
+	}
+
+	// update strike location
+	float* strike = gui->getDataBuffer(2).getAsFloat();
+	if (strike[0] != g_coords[0] || strike[1] != g_coords[1]) {
+		g_coords[0] = strike[0];
+		g_coords[1] = strike[1];
+		// the inference is also fast but not fast enough
+		// we do it in the background
+		Bela_scheduleAuxiliaryTask(gNNTask);
+		// rt_printf("strike %f %f \n", strike[0], strike[1]);
+	}
+
+	if ((++block_counter % n_blocks) == 0) {
 		fprintf(stdout, "Tick\n");
-        block_counter = 0;
-        once_every_n_blocks = true;
-    }
-    else
-    {
-        once_every_n_blocks = false;
-    }
+		block_counter = 0;
+		once_every_n_blocks = true;
+	} else {
+		once_every_n_blocks = false;
+	}
 #if 1
-    for(unsigned int n = 0; n < context->audioFrames; n++)
-    {
-        if(gAudioFramesPerAnalogFrame && !(n % gAudioFramesPerAnalogFrame))
-        {
+	for (unsigned int n = 0; n < context->audioFrames; n++) {
+		if (gAudioFramesPerAnalogFrame && !(n % gAudioFramesPerAnalogFrame)) {
 
-			in_1 = analogRead(context, n/gAudioFramesPerAnalogFrame, 0);
-			in_2 = analogRead(context, n/gAudioFramesPerAnalogFrame, 1);
-			in_3 = analogRead(context, n/gAudioFramesPerAnalogFrame, 2);
-			in_4 = analogRead(context, n/gAudioFramesPerAnalogFrame, 3);
-			in_5 = analogRead(context, n/gAudioFramesPerAnalogFrame, 4);
-			in_6 = analogRead(context, n/gAudioFramesPerAnalogFrame, 5);
-			in_7 = analogRead(context, n/gAudioFramesPerAnalogFrame, 6);
-			in_8 = analogRead(context, n/gAudioFramesPerAnalogFrame, 7);
+			in_1 = analogRead(context, n / gAudioFramesPerAnalogFrame, 0);
+			in_2 = analogRead(context, n / gAudioFramesPerAnalogFrame, 1);
+			in_3 = analogRead(context, n / gAudioFramesPerAnalogFrame, 2);
+			in_4 = analogRead(context, n / gAudioFramesPerAnalogFrame, 3);
+			in_5 = analogRead(context, n / gAudioFramesPerAnalogFrame, 4);
+			// in_6 = analogRead(context, n / gAudioFramesPerAnalogFrame, 5);
+			// in_7 = analogRead(context, n / gAudioFramesPerAnalogFrame, 6);
+			// in_8 = analogRead(context, n / gAudioFramesPerAnalogFrame, 7);
 
-            // Here choose an arbitrary range for the mapping
-            // size
-            in_1 = map(
-                in_1,
-                0, // in min
-                1, // in max
-                0.5F, // out min
-                5.0F // out max
-            ); 
+			// Here choose an arbitrary range for the mapping
+			// size
+			in_1 =
+				map(in_1,
+					0,		 // in min
+					1,		 // in max
+					0.5F,	 // out min
+					5.0F	 // out max
+				);
 
-            // rho
-            in_2 = map(
-                in_2,
-                0, // in min
-                1, // in max
-                1000.0F, // out min
-                15000.0F // out max
-            ); 
+			// rho
+			in_2 =
+				map(in_2,
+					0,			// in min
+					1,			// in max
+					1000.0F,	// out min
+					15000.0F	// out max
+				);
 
-            // E
-            in_3 = map(
-                in_3,
-                0, // in min
-                1, // in max
-                1e+9F, // out min
-                1e+11F // out max
-            ); 
+			// E
+			in_3 =
+				map(in_3,
+					0,		  // in min
+					1,		  // in max
+					1e+9F,	  // out min
+					1e+11F	  // out max
+				);
 
-            // alpha
-            in_4 = map(
-                in_4,
-                0, // in min
-                1, // in max
-                0.0F, // out min
-                5.0F // out max
-            );
+			// alpha
+			in_4 =
+				map(in_4,
+					0,		 // in min
+					1,		 // in max
+					0.0F,	 // out min
+					5.0F	 // out max
+				);
 
-            // beta
-            in_5 = map(
-                in_5,
-                0, // in min
-                1, // in max
-                1e-8F, // out min
-                1e-6F // out max
-            ); 
+			// beta
+			in_5 =
+				map(in_5,
+					0,		  // in min
+					1,		  // in max
+					1e-8F,	  // out min
+					1e-6F	  // out max
+				);
 
-            if (once_every_n_blocks)
-            {
-                g_scaling[0] = in_1;
-                g_scaling[1] = in_2;
-                g_scaling[2] = in_3;
-                g_scaling[3] = in_4;
-                g_scaling[4] = in_5;
-                // the scaling is very fast but it cannot run as fast as the analog read @16Khz
-                // so we schedule a background task
-                Bela_scheduleAuxiliaryTask(gScalingTask);
-            }
-        }
-
-        float out = 0;
-
-		if (g_impulse) {
-			out = 0.9;
-			g_impulse = false;
+			if (once_every_n_blocks) {
+				g_scaling[0] = in_1;
+				g_scaling[1] = in_2;
+				g_scaling[2] = in_3;
+				g_scaling[3] = in_4;
+				g_scaling[4] = in_5;
+				// the scaling is very fast but it cannot run as fast as the analog read @16Khz
+				// so we schedule a background task
+				Bela_scheduleAuxiliaryTask(gScalingTask);
+			}
 		}
 
-		out = static_cast<float>(filterbank->tick(out));
-
+		// apply audio input to filterbank
+		float out = static_cast<float>(filterbank->tick(audioRead(context, n, 0)));
 		// Loop over each audio channel
 		for (unsigned int ch = 0; ch < context->audioOutChannels; ch++) {
 			audioWrite(context, n, ch, out);
 		}
 	}
 
-    // received new coefficients
-    // we can probably do this also with pipes
-    if (gNewCoefficients)
-    {
-        filterbank->setCoefficients(nn->coefficients);
-        gNewCoefficients = false;
-    }
+	// received new coefficients
+	// we can probably do this also with pipes
+	if (gNewCoefficients) {
+		filterbank->setCoefficients(nn->coefficients);
+		gNewCoefficients = false;
+	}
 #endif
 }
 
@@ -420,23 +420,16 @@ void cleanup(BelaContext* context, void* userData) {
 	nn.reset();
 }
 
-void process_scaling_background(void*)
-{
-    nn->scale(
-        g_scaling
-    );
-    
-    gNewCoefficients = true;
+void process_scaling_background(void*) {
+	nn->scale(g_scaling);
+
+	gNewCoefficients = true;
 }
 
-void process_nn_background(void*)
-{
-  
-    // points must be in the range [0, 1] range
-    fft->fft_magnitude(
-        g_points_x,
-        g_points_y
-    );
+void process_nn_background(void*) {
+
+	// points must be in the range [0, 1] range
+	fft->fft_magnitude(g_points_x, g_points_y);
 
 	// points must be in the range [0, 1] range
 	fft->fft_magnitude(g_points_x, g_points_y);
