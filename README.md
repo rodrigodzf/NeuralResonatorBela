@@ -59,6 +59,11 @@ $ ./NeuralResonatorBela --modelPath optimized_curious-salad-167.pt
 
 ### Interact with the Bela (without Pepper build)
 
-In a web browser, navigate to the Bela IDE at http://bela.local/gui
+From your local machine, run the gui using:
 
-There you should be able to interact with the Bela and see the output of the program.
+```bash
+cd gui
+npm install --include=dev
+npm run build
+npm run preview
+```
