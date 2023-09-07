@@ -264,9 +264,13 @@ bool setup(BelaContext* context, void* userData) {
 
 
     // Initialize the gui
+    // gui = std::make_unique<Gui>();
+    // gui->setup(context->projectName);
+    // gui->setControlDataCallback(gui_callback, nullptr);
     gui = std::make_unique<Gui>();
     gui->setup(context->projectName);
-    gui->setControlDataCallback(gui_callback, nullptr);
+	gui->setBuffer('f', 128);			// Polygon
+	gui->setBuffer('f', 2);				// Point
 
     // Initialize analog 
 	if(context->analogFrames)
@@ -292,7 +296,14 @@ bool setup(BelaContext* context, void* userData) {
 
 void render(BelaContext *context, void *userData)
 {
-    float analogInput;
+	float in_1;
+	float in_2;
+	float in_3;
+	float in_4;
+	float in_5;
+	float in_6;
+	float in_7;
+	float in_8;
 
     if ((++block_counter % n_blocks) == 0)
     {
@@ -309,30 +320,72 @@ void render(BelaContext *context, void *userData)
     {
         if(gAudioFramesPerAnalogFrame && !(n % gAudioFramesPerAnalogFrame))
         {
-            analogInput = analogRead(
-                context, n/gAudioFramesPerAnalogFrame,
-                0 // Read the input pin 0
-            );
+
+			in_1 = analogRead(context, n/gAudioFramesPerAnalogFrame, 0);
+			in_2 = analogRead(context, n/gAudioFramesPerAnalogFrame, 1);
+			in_3 = analogRead(context, n/gAudioFramesPerAnalogFrame, 2);
+			in_4 = analogRead(context, n/gAudioFramesPerAnalogFrame, 3);
+			in_5 = analogRead(context, n/gAudioFramesPerAnalogFrame, 4);
+			in_6 = analogRead(context, n/gAudioFramesPerAnalogFrame, 5);
+			in_7 = analogRead(context, n/gAudioFramesPerAnalogFrame, 6);
+			in_8 = analogRead(context, n/gAudioFramesPerAnalogFrame, 7);
 
             // Here choose an arbitrary range for the mapping
-            analogInput = map(
-                analogInput,
+            // size
+            in_1 = map(
+                in_1,
                 0, // in min
                 1, // in max
-                1000.0, // out min
-                15000. // out max
+                0.5F, // out min
+                5.0F // out max
+            ); 
+
+            // rho
+            in_2 = map(
+                in_2,
+                0, // in min
+                1, // in max
+                1000.0F, // out min
+                15000.0F // out max
+            ); 
+
+            // E
+            in_3 = map(
+                in_3,
+                0, // in min
+                1, // in max
+                1e+9F, // out min
+                1e+11F // out max
+            ); 
+
+            // alpha
+            in_4 = map(
+                in_4,
+                0, // in min
+                1, // in max
+                0.0F, // out min
+                5.0F // out max
+            );
+
+            // beta
+            in_5 = map(
+                in_5,
+                0, // in min
+                1, // in max
+                1e-8F, // out min
+                1e-6F // out max
             ); 
 
             if (once_every_n_blocks)
             {
-                if (analogInput != g_scaling[1])
-                {
-
-                    g_scaling[1] = analogInput;
-                    // the scaling is very fast but it cannot run as fast as the analog read @16Khz
-                    // so we schedule a background task
-                    Bela_scheduleAuxiliaryTask(gScalingTask);
-                }
+                g_scaling[0] = in_1;
+                g_scaling[1] = in_2;
+                g_scaling[2] = in_3;
+                g_scaling[3] = in_4;
+                g_scaling[4] = in_5;
+                // the scaling is very fast but it cannot run as fast as the analog read @16Khz
+                // so we schedule a background task
+                Bela_scheduleAuxiliaryTask(gScalingTask);
             }
         }
 
