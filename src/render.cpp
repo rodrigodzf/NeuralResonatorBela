@@ -128,92 +128,6 @@ bool retrieve_points(
 	return ret;
 }
 
-// bool gui_callback(JSONObject& json, void*) {
-// 	if (json.find(JSON::s2ws("size")) != json.end()) {
-// 		auto param = retrieveAsNumber(json, "size");
-// 		g_scaling[0] = static_cast<float>(param);	 // physical size
-
-// 		nn->scale(g_scaling);
-
-// 		gNewCoefficients = true;
-// 	} else if (json.find(JSON::s2ws("rho")) != json.end()) {
-// 		// auto param = retrieveAsNumber(json, "rho");
-// 		// g_scaling[1] = static_cast<float>(param); // rho
-
-// 		// the scaling is very fast, so we can do it in the gui thread
-// 		// nn->scale(
-// 		// g_scaling
-// 		// );
-
-// 		// write to the pipe
-// 		// g_pipe.writeNonRt(nn->coefficients);
-// 		// gNewCoefficients = true;
-// 		// fprintf(stdout, "Received rho: %f\n", rho);
-// 	} else if (json.find(JSON::s2ws("E")) != json.end()) {
-// 		auto param = retrieveAsNumber(json, "E");
-// 		g_scaling[2] = static_cast<float>(param);	 // E
-
-// 		// the scaling is very fast, so we can do it in the gui thread
-// 		nn->scale(g_scaling);
-
-// 		// write to the pipe
-// 		// g_pipe.writeNonRt(nn->coefficients);
-// 		gNewCoefficients = true;
-// 		// fprintf(stdout, "Received rho: %f\n", rho);
-// 	} else if (json.find(JSON::s2ws("E")) != json.end()) {
-// 		auto param = retrieveAsNumber(json, "E");
-// 		g_scaling[2] = static_cast<float>(param);	 // E
-
-// 		nn->scale(g_scaling);
-
-// 		gNewCoefficients = true;
-// 	}
-
-// 	else if (json.find(JSON::s2ws("alpha")) != json.end()) {
-// 		auto param = retrieveAsNumber(json, "alpha");
-// 		g_scaling[3] = static_cast<float>(param);	 // alpha
-
-// 		nn->scale(g_scaling);
-
-// 		gNewCoefficients = true;
-// 	} else if (json.find(JSON::s2ws("beta")) != json.end()) {
-// 		auto param = retrieveAsNumber(json, "beta");
-// 		g_scaling[4] = static_cast<float>(param);	 // beta
-
-// 		nn->scale(g_scaling);
-
-// 		gNewCoefficients = true;
-// 	} else if (json.find(JSON::s2ws("coords")) != json.end()) {
-// 		if (json[JSON::s2ws("coords")]->IsObject()) {
-// 			auto coords = json[JSON::s2ws("coords")]->AsObject();
-// 			auto x_wstr = JSON::s2ws("x");
-// 			auto y_wstr = JSON::s2ws("y");
-// 			if (coords[x_wstr]->IsNumber()) {
-// 				g_coords[0] = coords[x_wstr]->AsNumber();
-// 			}
-
-// 			if (coords[y_wstr]->IsNumber()) {
-// 				g_coords[1] = coords[y_wstr]->AsNumber();
-// 			}
-
-// 			// the inference is also fast but not fast enough
-// 			// we do it in the background
-// 			Bela_scheduleAuxiliaryTask(gNNTask);
-// 		}
-// 	} else if (json.find(JSON::s2ws("vertices")) != json.end()) {
-// 		if (retrieve_points(json, "vertices", g_points_x, g_points_y)) {
-// 			// the inference is also fast but not fast enough
-// 			// we do it in the background
-// 			Bela_scheduleAuxiliaryTask(gNNTask);
-// 		}
-// 	} else if (json.find(JSON::s2ws("hit")) != json.end()) {
-// 		g_impulse = true;
-// 		fprintf(stdout, "Received hit\n");
-// 	}
-
-// 	return false;
-// }
-
 bool setup(BelaContext* context, void* userData) {
 	// Get options
 	AppOptions* options = static_cast<AppOptions*>(userData);
@@ -270,9 +184,6 @@ bool setup(BelaContext* context, void* userData) {
 
 	// Initialize the pipe
 	// g_pipe.setup("gui_to_rt");
-
-	// Initialize default parameters
-	initialize_parameters();
 
 	// Initialize default parameters
 	initialize_parameters();
