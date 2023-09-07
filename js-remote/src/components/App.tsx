@@ -31,10 +31,15 @@ export default function App(): JSX.Element {
 				<Drum
 					N={10} // will add controls for this later
 					// onPolygonChange={(P: Polygon) => console.log(`Polygon changed: ${P}`)}
-					onPolygonChange={(P: Polygon) => {
-					    P = interpolateLineRange(P, 64)
-						Bela.sendBuffer(0, 'float', P.map((p: Point) => [p.x, p.y]).flat())
-					}}
+					onPolygonChange={(P: Polygon) =>
+						Bela.sendBuffer(
+							0,
+							'float',
+							interpolateLineRange(P, 64)
+								.map((p: Point) => [p.x, p.y])
+								.flat(),
+						)
+					}
 					// onStrikeChange={(p: Point) => console.log(`Polygon changed: ${p}`)}
 					onStrikeChange={(p: Point) => Bela.sendBuffer(1, 'float', [p.x, p.y])}
 				/>
