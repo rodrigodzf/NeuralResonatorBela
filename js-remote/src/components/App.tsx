@@ -34,7 +34,7 @@ export default function App(): JSX.Element {
 						Bela.sendBuffer(0, 'float', P.map((p: Point) => [p.x, p.y]).flat())
 					}
 					// onStrikeChange={(p: Point) => console.log(`Polygon changed: ${p}`)}
-					onStrikeChange={(p: Point) => Bela.sendBuffer(0, 'float', [p.x, p.y])}
+					onStrikeChange={(p: Point) => Bela.sendBuffer(1, 'float', [p.x, p.y])}
 				/>
 			) : (
 				<p>There is no Bela connected... 🧑‍💻</p>
