@@ -35,11 +35,16 @@ rsync \
 root@192.168.7.2:/root/Bela/lib
 
 # Copy the pytorch files
+ssh root@192.168.7.2 "mkdir -p /opt/pytorch-install/lib"
+
 rsync \
 --timeout=10 \
 -vzP \
 /opt/pytorch-install/lib/* \
-root@192.168.7.2:/root/lib
+root@192.168.7.2:/opt/pytorch-install/lib
+
+# Copy the executable to Bela
+ssh root@192.168.7.2 "mkdir -p ~/Bela/projects/NeuralResonatorBela"
 
 rsync \
 --timeout=10 \
