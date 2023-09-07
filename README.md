@@ -1,5 +1,14 @@
 # NeuralResonatorBela
 
+This is the adaption of [Neural Resonator](https://github.com/rodrigodzf/NeuralResonatorVST) to run on the [Bela](https://bela.io/) platform.
+
+There are some changes to the [original](https://github.com/rodrigodzf/neuralresonator) project, so that it can run on the Bela. The main changes are:
+
+- The shape is encoded using the FFT coefficients of the shape boundary, instead of features from a CNN, which alleviates the feature extraction process.
+- The material parameters are used in a post-processing step, instead of being used as input to the model, which makes the model more robust and faster to changes in the material parameters. The simulation is however a bit less accurate w.r.t. the FEM simulation.
+- The MLP model used here is smaller than the original model.
+
+
 ## How to build this project
 
 ### Flashing the Bela
