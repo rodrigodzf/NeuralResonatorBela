@@ -66,7 +66,7 @@ $ cd /root/Bela/projects/NeuralResonatorBela
 $ ./NeuralResonatorBela --modelPath optimized_curious-salad-167.pt 
 ```
 
-### Interact with the Bela (without Pepper build)
+### Interact with the Bela
 
 From your local machine, run the gui using:
 
