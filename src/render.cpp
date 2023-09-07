@@ -292,7 +292,7 @@ bool setup(BelaContext *context, void *userData)
     initialize_parameters();
 
     // Do the inference once to warm up the model
-    Bela_scheduleAuxiliaryTask(gNNTask);
+    process_nn_background(nullptr);
 
     return true;
 }
