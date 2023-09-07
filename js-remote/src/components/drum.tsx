@@ -1,5 +1,5 @@
 // dependencies
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // src
 import { Point, Polygon, generateConvexPolygon, normalisePolygon } from '../geometry'
@@ -10,12 +10,17 @@ export const Drum: React.FC<{
 	onPolygonChange?: (P: Polygon) => any
 	onStrikeChange?: (p: Point) => any
 }> = ({ N = 10, onPolygonChange = () => {}, onStrikeChange = () => {} }) => {
-	const [strike, updateStrike] = useState<Point>({ x: 0.5, y: 0.5 })
 	const [polygon, updatePolygon] = useState<Polygon>(
 		normalisePolygon(generateConvexPolygon(N)).map((p: Point) => {
 			return { x: p.x * 0.8 + 0.1, y: p.y * 0.8 + 0.1 }
 		}),
 	)
+	const [strike, updateStrike] = useState<Point>({ x: 0.5, y: 0.5 })
+
+	useEffect(() => {
+		onPolygonChange(polygon)
+		onStrikeChange(strike)
+	}, [])
 
 	return (
 		<div className='drum'>
