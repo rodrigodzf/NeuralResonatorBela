@@ -63,7 +63,7 @@ There you should be able to interact with the Bela and see the output of the pro
 
 This project can also build a version that can run on the Bela [Pepper](https://www.youtube.com/watch?v=VLHxIMeSU-c). For this you need to switch to the **pepper** branch and run the build script again. This version utilises the Bela's analog inputs to control the parameters.
 
-Note that the Pepper build uses a custom web interface which is served by a server on a remote machine and not in the Bela. For this you need to start a server on your computer, not the Bela. This can be done by navigating to the `gui` folder and running the following command in the terminal:
+Note that the Pepper build uses a custom web interface which is served by a server on a remote machine. For this you need to start a server on your computer, not the Bela. This can be done by navigating to the `gui` folder and running the following command in the terminal:
 
 ```bash
 cd gui
