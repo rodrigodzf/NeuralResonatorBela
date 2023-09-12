@@ -30,19 +30,6 @@ Connect the Bela to your computer via USB and run the following command in the t
 ```bash
 $ bash build.sh
 ```
-## Running the Pepper build
-
-This project can also build a version that can run on the Bela [Pepper](https://www.youtube.com/watch?v=VLHxIMeSU-c). For this you need to switch to the **pepper** branch and run the build script again.
-
-Note that the Pepper build uses a custom web interface which is served by a server on a remote machine and not in the Bela. For this you need to start a server on your computer. This can be done by navigating to the `gui` folder and running the following command in the terminal:
-
-```bash
-npm install --include=dev
-npm run build
-npm run preview
-```
-
-For information about how to develop the web interface, see the [gui/readme.md](gui/readme.md) file.
 
 ## Running the project
 
@@ -68,7 +55,15 @@ $ ./NeuralResonatorBela --modelPath optimized_curious-salad-167.pt
 
 ### Interact with the Bela
 
-From your local machine, run the gui using:
+In a web browser, navigate to the Bela IDE at http://bela.local/gui
+
+There you should be able to interact with the Bela and see the output of the program.
+
+## Running the Pepper build
+
+This project can also build a version that can run on the Bela [Pepper](https://www.youtube.com/watch?v=VLHxIMeSU-c). For this you need to switch to the **pepper** branch and run the build script again. This version utilises the Bela's analog inputs to control the parameters.
+
+Note that the Pepper build uses a custom web interface which is served by a server on a remote machine and not in the Bela. For this you need to start a server on your computer, not the Bela. This can be done by navigating to the `gui` folder and running the following command in the terminal:
 
 ```bash
 cd gui
