@@ -18,5 +18,6 @@ npm run dev
 And before committing please 💁
 
 ```bash
+npm run test
 npm run lint
 ```

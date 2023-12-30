@@ -5,7 +5,7 @@ import { Point } from '../geometry'
 
 export const Vertex: React.FC<{
 	point: Point
-	onDrag: (p: Point, callback: boolean) => any
+	onDrag: (p: Point, callback: boolean) => void
 	className?: string
 }> = ({ point, onDrag, className = '' }) => {
 	/*
@@ -14,11 +14,11 @@ export const Vertex: React.FC<{
 
 	const self = useRef<HTMLDivElement>(null)
 	// handle movement of points
-	const [mouseDown, setMouseDown] = useState<boolean>(false)
+	const [mouse_down, setMouseDown] = useState<boolean>(false)
 	useEffect(() => {
 		// update the location of a point and fire callback
 		function updatePoint(e: MouseEvent, callback: boolean): void {
-			if (mouseDown && self?.current?.parentElement) {
+			if (mouse_down && self.current?.parentElement) {
 				const parent = self.current.parentElement.getBoundingClientRect()
 				if (
 					e.clientX >= parent.left &&
@@ -52,7 +52,7 @@ export const Vertex: React.FC<{
 			window.removeEventListener('mousemove', changePosition)
 			window.removeEventListener('mouseup', releasePoint)
 		}
-	}, [mouseDown])
+	}, [mouse_down, onDrag])
 
 	return (
 		<div
@@ -62,7 +62,9 @@ export const Vertex: React.FC<{
 				top: `calc(${point.y * 100}% - 5px)`,
 				left: `calc(${point.x * 100}% - 5px)`,
 			}}
-			onMouseDown={() => setMouseDown(true)}
+			onMouseDown={() => {
+				setMouseDown(true)
+			}}
 		/>
 	)
 }

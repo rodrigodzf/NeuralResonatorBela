@@ -4,8 +4,10 @@ import { createRoot } from 'react-dom/client'
 // src
 import App from './components/App'
 
-createRoot(document.getElementById('root')!).render(
-	<React.StrictMode>
-		<App />
-	</React.StrictMode>,
-)
+const root = document.getElementById('root')
+root &&
+	createRoot(root).render(
+		<React.StrictMode>
+			<App />
+		</React.StrictMode>,
+	)

@@ -1,13 +1,13 @@
 # project
-/unused
 todo.md
+unused
 
 # dependencies
-/node_modules
+node_modules
 
 # production
-/dist
+dist
 
 # misc
-/.vscode
 .DS_Store
+.vscode

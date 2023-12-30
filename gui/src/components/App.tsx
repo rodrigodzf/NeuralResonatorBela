@@ -15,8 +15,12 @@ export default function App(): JSX.Element {
 	)
 	useEffect(() => {
 		// listeners for when Bela is connected/disconnected
-		const belaOn = () => updateBelaLoaded(true)
-		const belaOff = () => updateBelaLoaded(false)
+		const belaOn = () => {
+			updateBelaLoaded(true)
+		}
+		const belaOff = () => {
+			updateBelaLoaded(false)
+		}
 		window.addEventListener('BelaConnected', belaOn)
 		window.addEventListener('BelaDisconnected', belaOff)
 		return () => {

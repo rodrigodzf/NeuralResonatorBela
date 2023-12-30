@@ -3,24 +3,79 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"scripts": {
-		"dev": "vite --host",
-		"build": "tsc && vite build",
-		"lint": "npx prettier --write --config ./.prettierrc .",
-		"preview": "vite preview"
-	},
 	"dependencies": {
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"sass": "^1.66.1"
+		"sass": "^1.69.6"
 	},
 	"devDependencies": {
-		"@types/node": "^20.5.7",
-		"@types/react": "^18.2.21",
-		"@types/react-dom": "^18.2.7",
-		"@vitejs/plugin-react-swc": "^3.3.2",
-		"prettier": "^3.0.3",
-		"typescript": "^5.2.2",
-		"vite": "^4.4.9"
+		"@types/node": "^20.10.6",
+		"@types/react": "^18.2.46",
+		"@types/react-dom": "^18.2.18",
+		"@typescript-eslint/eslint-plugin": "^6.16.0",
+		"@typescript-eslint/parser": "^6.16.0",
+		"@vitejs/plugin-react-swc": "^3.5.0",
+		"eslint": "^8.56.0",
+		"eslint-plugin-react-hooks": "^4.6.0",
+		"eslint-plugin-react-refresh": "^0.4.5",
+		"prettier": "^3.1.1",
+		"typescript": "^5.3.3",
+		"vite": "^5.0.10"
+	},
+	"scripts": {
+		"dev": "vite --host",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"lint": "prettier --write .",
+		"test": "tsc && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+	},
+	"eslintConfig": {
+		"root": true,
+		"env": {
+			"browser": true,
+			"es2020": true
+		},
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/strict-type-checked",
+			"plugin:react-hooks/recommended"
+		],
+		"ignorePatterns": [
+			"dist",
+			"unused"
+		],
+		"parser": "@typescript-eslint/parser",
+		"parserOptions": {
+			"project": [
+				"./tsconfig.json",
+				"./tsconfig.node.json"
+			]
+		},
+		"plugins": [
+			"react-refresh"
+		],
+		"rules": {
+			"react-refresh/only-export-components": [
+				"warn",
+				{
+					"allowConstantExport": true
+				}
+			]
+		}
+	},
+	"prettier": {
+		"arrowParens": "always",
+		"bracketSpacing": true,
+		"bracketSameLine": false,
+		"endOfLine": "lf",
+		"htmlWhitespaceSensitivity": "strict",
+		"jsxSingleQuote": true,
+		"printWidth": 100,
+		"quoteProps": "as-needed",
+		"semi": false,
+		"singleQuote": true,
+		"tabWidth": 4,
+		"trailingComma": "all",
+		"useTabs": true
 	}
 }

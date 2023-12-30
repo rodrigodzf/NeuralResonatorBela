@@ -7,8 +7,8 @@ import { Vertex } from './vertex'
 
 export const Drum: React.FC<{
 	N?: number
-	onPolygonChange?: (P: Polygon) => any
-	onStrikeChange?: (p: Point) => any
+	onPolygonChange?: (P: Polygon) => void
+	onStrikeChange?: (p: Point) => void
 }> = ({ N = 10, onPolygonChange = () => {}, onStrikeChange = () => {} }) => {
 	const [polygon, updatePolygon] = useState<Polygon>(
 		normalisePolygon(generateConvexPolygon(N)).map((p: Point) => {
@@ -20,6 +20,7 @@ export const Drum: React.FC<{
 	useEffect(() => {
 		onPolygonChange(polygon)
 		onStrikeChange(strike)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return (
@@ -34,7 +35,7 @@ export const Drum: React.FC<{
 					key={i}
 					point={p}
 					onDrag={(v: Point, callback: boolean) => {
-						let tmp: Polygon = [...polygon]
+						const tmp: Polygon = [...polygon]
 						tmp[i] = v
 						if (callback) {
 							// tmp = two_opt(tmp)
