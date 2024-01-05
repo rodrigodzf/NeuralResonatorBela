@@ -6,34 +6,36 @@
 	"dependencies": {
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"sass": "^1.69.6"
+		"sass": "^1.69.7"
 	},
 	"devDependencies": {
 		"@types/node": "^20.10.6",
 		"@types/react": "^18.2.46",
 		"@types/react-dom": "^18.2.18",
-		"@typescript-eslint/eslint-plugin": "^6.16.0",
-		"@typescript-eslint/parser": "^6.16.0",
+		"@typescript-eslint/eslint-plugin": "^6.17.0",
+		"@typescript-eslint/parser": "^6.17.0",
 		"@vitejs/plugin-react-swc": "^3.5.0",
 		"eslint": "^8.56.0",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"eslint-plugin-react-refresh": "^0.4.5",
 		"prettier": "^3.1.1",
+		"stylelint": "^16.1.0",
+		"stylelint-config-standard-scss": "^13.0.0",
 		"typescript": "^5.3.3",
-		"vite": "^5.0.10"
+		"vite": "^5.0.11"
 	},
 	"scripts": {
-		"dev": "vite --host",
 		"build": "tsc && vite build",
+		"dev": "vite --host",
 		"preview": "vite preview",
-		"lint": "prettier --write .",
-		"test": "tsc && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+		"format": "prettier --write .",
+		"test": "tsc && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && stylelint **/*.scss"
 	},
 	"eslintConfig": {
 		"root": true,
 		"env": {
 			"browser": true,
-			"es2020": true
+			"es2024": true
 		},
 		"extends": [
 			"eslint:recommended",
@@ -77,5 +79,14 @@
 		"tabWidth": 4,
 		"trailingComma": "all",
 		"useTabs": true
+	},
+	"stylelint": {
+		"extends": "stylelint-config-standard-scss",
+		"rules": {
+			"declaration-empty-line-before": null,
+			"no-invalid-position-at-import-rule": null,
+			"property-no-vendor-prefix": null,
+			"scss/double-slash-comment-empty-line-before": null
+		}
 	}
 }

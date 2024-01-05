@@ -23,17 +23,17 @@ body {
 	font-family: inherit;
 	font-size: inherit;
 	color: inherit;
-	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 	background-color: $black;
 	user-select: none !important;
+	-webkit-user-select: none !important;
 }
 
 #root {
 	height: 100%;
 	width: 100%;
 	display: grid;
-	align-content: center;
-	justify-content: center;
+	place-content: center center;
 }
 
 // children

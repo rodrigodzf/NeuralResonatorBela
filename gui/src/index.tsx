@@ -1,5 +1,5 @@
 // dependencies
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 // src
 import App from './components/App'
@@ -7,7 +7,7 @@ import App from './components/App'
 const root = document.getElementById('root')
 root &&
 	createRoot(root).render(
-		<React.StrictMode>
+		<StrictMode>
 			<App />
-		</React.StrictMode>,
+		</StrictMode>,
 	)
