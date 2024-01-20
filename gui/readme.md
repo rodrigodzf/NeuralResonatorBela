@@ -19,5 +19,5 @@ And before committing please 💁
 
 ```bash
 npm run test
-npm run lint
+npm run format
 ```
