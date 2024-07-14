@@ -1,6 +1,8 @@
 // src
 import { lineIntersection } from './lines'
-import { Point, Polygon } from './types'
+import type { Point, Polygon } from './types'
+
+type _Point = NonNullable<Point>
 
 export function isConvex(P: Readonly<Polygon>): boolean {
 	/*
@@ -20,10 +22,10 @@ export function isConvex(P: Readonly<Polygon>): boolean {
 	}
 	// determine the direction of the initial point using the cross product
 	const N: number = P.length
-	const clockwise: boolean = crossProductZ(P[0]!, P[1]!, P[N - 1]!) < 0
+	const clockwise: boolean = crossProductZ(P[0] as _Point, P[1] as _Point, P[N - 1] as _Point) < 0
 	// loop over remaining points
 	for (let n = 1; n < N; n++) {
-		if (crossProductZ(P[n]!, P[(n + 1) % N]!, P[n - 1]!) < 0 != clockwise) {
+		if (crossProductZ(P[n] as _Point, P[(n + 1) % N] as _Point, P[n - 1] as _Point) < 0 !== clockwise) {
 			return false
 		}
 	}
@@ -39,12 +41,10 @@ export function isSimple(P: Readonly<Polygon>): boolean {
 	for (let i = 0; i < N - 2; i++) {
 		for (let j = i + 1; j < N; j++) {
 			const intersection_type: string = lineIntersection(
-				[P[i]!, P[i + 1]!],
-				[P[j]!, P[(j + 1) % N]!],
+				[P[i] as _Point, P[i + 1] as _Point],
+				[P[j] as _Point, P[(j + 1) % N] as _Point],
 			)[0]
-			if (intersection_type == 'none' || intersection_type == 'vertex') {
-				continue
-			} else {
+			if (intersection_type !== 'none' && intersection_type !== 'vertex') {
 				return false
 			}
 		}
@@ -64,9 +64,8 @@ export function largestVector(P: Readonly<Polygon>): [number, [number, number]] 
 	let index_j: number = 0
 	for (let i = 0; i < N; i++) {
 		for (let j = i + 1; j < N; j++) {
-			let vec: number = Math.sqrt(
-				Math.pow(P[i]!.x - P[j]!.x, 2) + Math.pow(P[i]!.y - P[j]!.y, 2),
-			)
+			const vec: number =
+				(((P[i] as _Point).x - (P[j] as _Point).x) ** 2 + ((P[i] as _Point).y - (P[j] as _Point).y) ** 2) ** 0.5
 			if (vec > vec_max) {
 				vec_max = vec
 				index_i = i

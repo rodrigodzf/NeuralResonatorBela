@@ -110,9 +110,7 @@ export default class BelaData extends BelaWebSocket {
 			this.buffers[this.newBuffer['id']] = this.newBuffer['data']
 			this.bufferReady = true
 
-			this.target.dispatchEvent(
-				new CustomEvent('buffer-ready', { detail: this.newBuffer['id'] }),
-			)
+			this.target.dispatchEvent(new CustomEvent('buffer-ready', { detail: this.newBuffer['id'] }))
 		}
 	}
 

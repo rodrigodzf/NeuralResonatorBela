@@ -1,9 +1,9 @@
 // dependencies
-import { useEffect, useRef, useState } from 'react'
+import { type FC, useEffect, useRef, useState } from 'react'
 
-import { Point } from '../geometry'
+import type { Point } from '../geometry'
 
-export const Vertex: React.FC<{
+export const Vertex: FC<{
 	point: Point
 	onDrag: (p: Point, callback: boolean) => void
 	className?: string
@@ -59,8 +59,8 @@ export const Vertex: React.FC<{
 			ref={self}
 			className={`vertex ${className}`}
 			style={{
-				top: `calc(${point.y * 100}% - 5px)`,
-				left: `calc(${point.x * 100}% - 5px)`,
+				top: `calc(${(point.y * 100).toString()}% - 5px)`,
+				left: `calc(${(point.x * 100).toString()}% - 5px)`,
 			}}
 			onMouseDown={() => {
 				setMouseDown(true)

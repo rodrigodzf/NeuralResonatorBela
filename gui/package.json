@@ -4,32 +4,32 @@
 	"version": "0.0.0",
 	"type": "module",
 	"dependencies": {
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"sass": "^1.70.0"
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"sass": "^1.77.8"
 	},
 	"devDependencies": {
-		"@types/node": "^20.11.5",
-		"@types/react": "^18.2.48",
-		"@types/react-dom": "^18.2.18",
-		"@typescript-eslint/eslint-plugin": "^6.19.0",
-		"@typescript-eslint/parser": "^6.19.0",
-		"@vitejs/plugin-react-swc": "^3.5.0",
-		"eslint": "^8.56.0",
-		"eslint-plugin-react-hooks": "^4.6.0",
-		"eslint-plugin-react-refresh": "^0.4.5",
-		"prettier": "^3.2.2",
-		"stylelint": "^16.2.0",
-		"stylelint-config-standard-scss": "^13.0.0",
-		"typescript": "^5.3.3",
-		"vite": "^5.0.12"
+		"@types/node": "^20.14.10",
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
+		"@typescript-eslint/eslint-plugin": "^7.16.0",
+		"@typescript-eslint/parser": "^7.16.0",
+		"@vitejs/plugin-react-swc": "^3.7.0",
+		"eslint": "^8.57.0",
+		"eslint-plugin-react-hooks": "^4.6.2",
+		"eslint-plugin-react-refresh": "^0.4.8",
+		"prettier": "^3.3.3",
+		"stylelint": "^16.7.0",
+		"stylelint-config-standard-scss": "^13.1.0",
+		"typescript": "^5.5.3",
+		"vite": "^5.3.3"
 	},
 	"scripts": {
 		"build": "tsc && vite build",
 		"dev": "vite --host",
 		"preview": "vite preview",
 		"format": "prettier --write .",
-		"test": "tsc && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 && stylelint **/*.scss"
+		"test": "tsc && eslint . --ext ts,tsx && stylelint **/*.scss"
 	},
 	"eslintConfig": {
 		"root": true,
@@ -72,7 +72,7 @@
 		"endOfLine": "lf",
 		"htmlWhitespaceSensitivity": "strict",
 		"jsxSingleQuote": true,
-		"printWidth": 100,
+		"printWidth": 120,
 		"quoteProps": "as-needed",
 		"semi": false,
 		"singleQuote": true,

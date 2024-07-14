@@ -1,5 +1,5 @@
 // src
-import { Polygon } from './types'
+import type { Point, Polygon } from './types'
 
 export function normalisePolygon(P: Polygon): Polygon {
 	/*
@@ -8,22 +8,20 @@ export function normalisePolygon(P: Polygon): Polygon {
 	*/
 
 	// first find minmax in both x & y
-	let X: number[] = []
-	let Y: number[] = []
-	const N: number = P.length
-	for (let n = 0; n < N; n++) {
-		X.push(P[n]!.x)
-		Y.push(P[n]!.y)
-	}
+	const X: number[] = []
+	const Y: number[] = []
+	P.map((p: Point) => {
+		X.push(p.x)
+		Y.push(p.y)
+	})
 	const x_min_max: [number, number] = [Math.min(...X), Math.max(...X)]
 	const y_min_max: [number, number] = [Math.min(...Y), Math.max(...Y)]
 	// center along x and y axes
 	const x_shift: number = (x_min_max[0] + x_min_max[1]) / 2
 	const y_shift: number = (y_min_max[0] + y_min_max[1]) / 2
-	for (let n = 0; n < N; n++) {
-		P[n]!.x -= x_shift
-		P[n]!.y -= y_shift
-	}
+	P = P.map((p: Point) => {
+		return { x: p.x - x_shift, y: p.y - y_shift }
+	})
 	x_min_max[0] -= x_shift
 	x_min_max[1] -= x_shift
 	y_min_max[0] -= y_shift
@@ -32,9 +30,7 @@ export function normalisePolygon(P: Polygon): Polygon {
 	const v_min: number = x_min_max[0] < y_min_max[0] ? x_min_max[0] : y_min_max[0]
 	const v_d: number = (x_min_max[1] > y_min_max[1] ? x_min_max[1] : y_min_max[1]) - v_min
 	// normalise
-	for (let n = 0; n < N; n++) {
-		P[n]!.x = (P[n]!.x - v_min) / v_d
-		P[n]!.y = (P[n]!.y - v_min) / v_d
-	}
-	return P
+	return P.map((p: Point) => {
+		return { x: (p.x - v_min) / v_d, y: (p.y - v_min) / v_d }
+	})
 }

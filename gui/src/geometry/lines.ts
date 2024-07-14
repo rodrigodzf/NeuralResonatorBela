@@ -1,12 +1,12 @@
 // src
-import { Line, Point } from './types'
+import type { Line, Point } from './types'
 
 export function isColinear(a: Readonly<Point>, b: Readonly<Point>, c: Readonly<Point>): boolean {
 	/*
 	Determines whether or not a given set of three vertices are colinear.
 	*/
 
-	return (c.y - b.y) * (b.x - a.x) == (b.y - a.y) * (c.x - b.x)
+	return (c.y - b.y) * (b.x - a.x) === (b.y - a.y) * (c.x - b.x)
 }
 
 export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string, Point] {
@@ -33,9 +33,9 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 	*/
 
 	// search for shared vertices
-	if ((A[0].x == B[0].x && A[0].y == B[0].y) || (A[0].x == B[1].x && A[0].y == B[1].y)) {
+	if ((A[0].x === B[0].x && A[0].y === B[0].y) || (A[0].x === B[1].x && A[0].y === B[1].y)) {
 		return ['vertex', A[0]]
-	} else if ((A[1].x == B[0].x && A[1].y == B[0].y) || (A[1].x == B[1].x && A[1].y == B[1].y)) {
+	} else if ((A[1].x === B[0].x && A[1].y === B[0].y) || (A[1].x === B[1].x && A[1].y === B[1].y)) {
 		return ['vertex', A[1]]
 	}
 	// test for colinear cases.
@@ -44,7 +44,7 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 	colinearities += isColinear(A[1], B[0], B[1]) ? 1 : 0
 	colinearities += isColinear(B[0], B[1], A[0]) ? 1 : 0
 	colinearities += isColinear(B[1], A[0], A[1]) ? 1 : 0
-	if (colinearities == 4) {
+	if (colinearities === 4) {
 		return [
 			'colinear',
 			{
@@ -66,13 +66,13 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 			y: A[0].y + u_A * (A[1].y - A[0].y),
 		}
 		// test for adjacent case
-		if (A[0].x == p.x && A[0].y == p.y) {
+		if (A[0].x === p.x && A[0].y === p.y) {
 			return ['adjacent', A[0]]
-		} else if (A[1].x == p.x && A[1].y == p.y) {
+		} else if (A[1].x === p.x && A[1].y === p.y) {
 			return ['adjacent', A[1]]
-		} else if (B[0].x == p.x && B[0].y == p.y) {
+		} else if (B[0].x === p.x && B[0].y === p.y) {
 			return ['adjacent', B[0]]
-		} else if (B[1].x == p.x && B[1].y == p.y) {
+		} else if (B[1].x === p.x && B[1].y === p.y) {
 			return ['adjacent', B[1]]
 		}
 		// return general case

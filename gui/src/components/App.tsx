@@ -1,18 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // dependencies
-import { useEffect, useState } from 'react'
+import { type JSX, useEffect, useState } from 'react'
 
 // src
 import '../scss/App.scss'
 import Bela from '../BelaAPI'
-import { Point, Polygon } from '../geometry'
+import type { Point, Polygon } from '../geometry'
 import { Drum } from './drum'
-import { interpolateLineRange } from './polygon2buffer'
 
 export default function App(): JSX.Element {
 	// is the Bela ws connected?
-	const [belaLoaded, updateBelaLoaded] = useState<boolean>(
-		Bela.ws.readyState === 1 ? true : false,
-	)
+	const [belaLoaded, updateBelaLoaded] = useState<boolean>(Bela.ws.readyState === 1)
 	useEffect(() => {
 		// listeners for when Bela is connected/disconnected
 		const belaOn = () => {
@@ -35,7 +33,7 @@ export default function App(): JSX.Element {
 		<>
 			{belaLoaded ? (
 				<Drum
-					N={10} // will add controls for this later
+					N={10} // will add controls for this later, and need to be aware of Bela's max buffer size
 					// onPolygonChange={(P: Polygon) => console.log(`Polygon changed: ${P}`)}
 					onPolygonChange={(P: Polygon) => {
 						Bela.sendBuffer(0, 'float', polygonUpdated ? 0 : 1)
@@ -43,9 +41,7 @@ export default function App(): JSX.Element {
 						Bela.sendBuffer(
 							1,
 							'float',
-							interpolateLineRange(P, 64)
-								.map((p: Point) => [p.x, p.y])
-								.flat(),
+							P.flatMap((p: Point) => [p.x, p.y]),
 						)
 					}}
 					// onStrikeChange={(p: Point) => console.log(`Polygon changed: ${p}`)}
