@@ -25,12 +25,12 @@ export const Drum: FC<{
 	)
 	const [strike, updateStrike] = useState<Point>({ x: 0.5, y: 0.5 })
 
-	/* eslint-disable react-hooks/exhaustive-deps */
+	// /* eslint-disable react-hooks/exhaustive-deps */
 	useEffect(() => {
 		onPolygonChange(polygon)
 		onStrikeChange(strike)
 	}, [])
-	/* eslint-enable react-hooks/exhaustive-deps */
+	// /* eslint-enable react-hooks/exhaustive-deps */
 
 	return (
 		<div className='drum'>
@@ -48,7 +48,9 @@ export const Drum: FC<{
 						tmp[i] = v
 						if (isSimple(tmp)) {
 							updatePolygon(tmp)
-							callback && onPolygonChange(tmp)
+							if (callback) {
+								onPolygonChange(tmp)
+							}
 						}
 					}}
 				/>
@@ -59,7 +61,9 @@ export const Drum: FC<{
 				onDrag={(p: Point, callback: boolean) => {
 					// if (isPointInsidePolygon(p, polygon)){
 					updateStrike(p)
-					callback && onStrikeChange(p)
+					if (callback) {
+						onStrikeChange(p)
+					}
 					// }
 				}}
 			/>

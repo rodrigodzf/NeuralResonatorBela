@@ -9,6 +9,24 @@ export function isColinear(a: Readonly<Point>, b: Readonly<Point>, c: Readonly<P
 	return (c.y - b.y) * (b.x - a.x) === (b.y - a.y) * (c.x - b.x)
 }
 
+export function isPointOnLine(p: Readonly<Point>, A: Readonly<Line>) {
+	/*
+	Determines whether or not a point lies on a line segment.
+	*/
+
+	// check if p is within the bounding box of A
+	if (
+		p.x < Math.min(A[0].x, A[1].x) ||
+		p.x > Math.max(A[0].x, A[1].x) ||
+		p.y < Math.min(A[0].y, A[1].y) ||
+		p.y > Math.max(A[0].y, A[1].y)
+	) {
+		return false
+	}
+	// check if p is collinear with A[0] and A[1]
+	return isColinear(A[0], A[1], p)
+}
+
 export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string, Point] {
 	/*
 	This function determines whether a line has an intersection, and returns it's type as well
@@ -39,44 +57,42 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 		return ['vertex', A[1]]
 	}
 	// test for colinear cases.
-	let colinearities: number = 0
-	colinearities += isColinear(A[0], A[1], B[0]) ? 1 : 0
-	colinearities += isColinear(A[1], B[0], B[1]) ? 1 : 0
-	colinearities += isColinear(B[0], B[1], A[0]) ? 1 : 0
-	colinearities += isColinear(B[1], A[0], A[1]) ? 1 : 0
-	if (colinearities === 4) {
-		return [
-			'colinear',
-			{
-				x: (A[0].x + A[1].x + B[0].x + B[1].x) / 4,
-				y: (A[0].y + A[1].y + B[0].y + B[1].y) / 4,
-			},
-		]
-	}
-	// calculate the general case using distance to intersection point.
-	const u_A: number =
-		((B[1].x - B[0].x) * (A[0].y - B[0].y) - (B[1].y - B[0].y) * (A[0].x - B[0].x)) /
-		((B[1].y - B[0].y) * (A[1].x - A[0].x) - (B[1].x - B[0].x) * (A[1].y - A[0].y))
-	const u_B: number =
-		((A[1].x - A[0].x) * (A[0].y - B[0].y) - (A[1].y - A[0].y) * (A[0].x - B[0].x)) /
-		((B[1].y - B[0].y) * (A[1].x - A[0].x) - (B[1].x - B[0].x) * (A[1].y - A[0].y))
-	if (u_A >= 0 && u_A <= 1 && u_B >= 0 && u_B <= 1) {
-		const p: Point = {
-			x: A[0].x + u_A * (A[1].x - A[0].x),
-			y: A[0].y + u_A * (A[1].y - A[0].y),
+	if (isColinear(A[0], A[1], B[0]) && isColinear(A[0], A[1], B[1])) {
+		if (isPointOnLine(A[0], B) || isPointOnLine(A[1], B) || isPointOnLine(B[0], A) || isPointOnLine(B[1], A)) {
+			return [
+				'colinear',
+				{
+					x: (A[0].x + A[1].x + B[0].x + B[1].x) / 4,
+					y: (A[0].y + A[1].y + B[0].y + B[1].y) / 4,
+				},
+			]
 		}
-		// test for adjacent case
-		if (A[0].x === p.x && A[0].y === p.y) {
-			return ['adjacent', A[0]]
-		} else if (A[1].x === p.x && A[1].y === p.y) {
-			return ['adjacent', A[1]]
-		} else if (B[0].x === p.x && B[0].y === p.y) {
-			return ['adjacent', B[0]]
-		} else if (B[1].x === p.x && B[1].y === p.y) {
-			return ['adjacent', B[1]]
+	} else {
+		// calculate the general case using distance to intersection point.
+		const u_A: number =
+			((B[1].x - B[0].x) * (A[0].y - B[0].y) - (B[1].y - B[0].y) * (A[0].x - B[0].x)) /
+			((B[1].y - B[0].y) * (A[1].x - A[0].x) - (B[1].x - B[0].x) * (A[1].y - A[0].y))
+		const u_B: number =
+			((A[1].x - A[0].x) * (A[0].y - B[0].y) - (A[1].y - A[0].y) * (A[0].x - B[0].x)) /
+			((B[1].y - B[0].y) * (A[1].x - A[0].x) - (B[1].x - B[0].x) * (A[1].y - A[0].y))
+		if (u_A >= 0 && u_A <= 1 && u_B >= 0 && u_B <= 1) {
+			const p: Point = {
+				x: A[0].x + u_A * (A[1].x - A[0].x),
+				y: A[0].y + u_A * (A[1].y - A[0].y),
+			}
+			// test for adjacent case
+			if (A[0].x === p.x && A[0].y === p.y) {
+				return ['adjacent', A[0]]
+			} else if (A[1].x === p.x && A[1].y === p.y) {
+				return ['adjacent', A[1]]
+			} else if (B[0].x === p.x && B[0].y === p.y) {
+				return ['adjacent', B[0]]
+			} else if (B[1].x === p.x && B[1].y === p.y) {
+				return ['adjacent', B[1]]
+			}
+			// return general case
+			return ['intersect', p]
 		}
-		// return general case
-		return ['intersect', p]
 	}
 	// return the null case
 	return ['none', { x: 0, y: 0 }]

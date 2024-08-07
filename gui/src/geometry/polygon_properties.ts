@@ -58,10 +58,10 @@ export function largestVector(P: Readonly<Polygon>): [number, [number, number]] 
 	largest vector, and returns the length of the vector and its indices.
 	*/
 
-	const N: number = P.length
-	let vec_max: number = 0
-	let index_i: number = 0
-	let index_j: number = 0
+	const N = P.length
+	let vec_max = 0
+	let index_i = 0
+	let index_j = 0
 	for (let i = 0; i < N; i++) {
 		for (let j = i + 1; j < N; j++) {
 			const vec: number =

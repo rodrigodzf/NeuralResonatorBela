@@ -18,8 +18,8 @@ export function generateConvexPolygon(N: Readonly<number>): Polygon {
 	const Y = Array.from({ length: N }, () => 0)
 	const X_rand = Array.from({ length: N }, () => Math.random()).sort()
 	const Y_rand = Array.from({ length: N }, () => Math.random()).sort()
-	let last_true: number = 0
-	let last_false: number = 0
+	let last_true = 0
+	let last_false = 0
 	// divide the interior points into two chains
 	for (let i = 1; i < N; i++) {
 		if (i !== N - 1) {
@@ -47,12 +47,12 @@ export function generateConvexPolygon(N: Readonly<number>): Polygon {
 	// sort by polar angle
 	P.sort((a: Point, b: Point) => Math.atan2(a.y, a.x) - Math.atan2(b.y, b.x))
 	// arrange points end to end to form a polygon
-	let x_min: number = 0
-	let x_max: number = 0
-	let y_min: number = 0
-	let y_max: number = 0
-	let x: number = 0.0
-	let y: number = 0.0
+	let x_min = 0
+	let x_max = 0
+	let y_min = 0
+	let y_max = 0
+	let x = 0.0
+	let y = 0.0
 	P = P.map((p: Point) => {
 		const p_prime: Point = { x, y }
 		x += p.x
