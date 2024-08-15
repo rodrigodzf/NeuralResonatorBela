@@ -2,7 +2,14 @@
 import { type FC, useEffect, useState } from 'react'
 
 // src
-import { type Point, type Polygon, generateConvexPolygon, normalisePolygon, isSimple } from '../geometry'
+import {
+	type Point,
+	type Polygon,
+	generateConvexPolygon,
+	normalisePolygon,
+	isPointInsidePolygon,
+	isSimple,
+} from '../geometry'
 import { Vertex } from './vertex'
 
 export const Drum: FC<{
@@ -59,12 +66,12 @@ export const Drum: FC<{
 				className='strike'
 				point={strike}
 				onDrag={(p: Point, callback: boolean) => {
-					// if (isPointInsidePolygon(p, polygon)){
-					updateStrike(p)
-					if (callback) {
-						onStrikeChange(p)
+					if (isPointInsidePolygon(p, polygon)) {
+						updateStrike(p)
+						if (callback) {
+							onStrikeChange(p)
+						}
 					}
-					// }
 				}}
 			/>
 		</div>

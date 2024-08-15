@@ -1,6 +1,6 @@
 // src
-import { lineIntersection } from './lines'
-import type { Point, Polygon } from './types'
+import { isPointOnLine, lineIntersection } from './lines'
+import type { Line, Point, Polygon } from './types'
 
 type _Point = NonNullable<Point>
 
@@ -30,6 +30,36 @@ export function isConvex(P: Readonly<Polygon>): boolean {
 		}
 	}
 	return true
+}
+
+export function isPointInsidePolygon(p: Readonly<Point>, P: Readonly<Polygon>): boolean {
+	/*
+	Determines whether or not a cartesian pair is within a polygon, including boundaries.
+	This algorithm builds upon the ray tracing ideas shown in solution 1
+		=> https://paulbourke.net/geometry/polygonmesh/
+	*/
+
+	const N: number = P.length
+	// create a ray that extends to the right of the polygon
+	const ray: Line = [p, { x: P.reduce((max: number, a: Point) => Math.max(max, a.x), -Infinity) + 1, y: p.y }]
+	// count the number of times the ray is intersected
+	let count = 0
+	for (let n = 0; n < N; n++) {
+		const A: Line = [P[n] as NonNullable<Point>, P[(n + 1) % N] as NonNullable<Point>]
+		// return true if point is a vertex
+		if (A[0].x === p.x && A[0].y === p.y) {
+			return true
+		}
+		// return true if point is on the line
+		if (isPointOnLine(p, A)) {
+			return true
+		}
+		// general case
+		if (lineIntersection(ray, A)[0] === 'intersect') {
+			count++
+		}
+	}
+	return count % 2 === 1
 }
 
 export function isSimple(P: Readonly<Polygon>): boolean {
