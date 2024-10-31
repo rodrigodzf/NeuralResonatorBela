@@ -14,7 +14,7 @@
 #include <libraries/Pipe/Pipe.h>
 #include <vector>
 
-std::unique_ptr<Filterbank> filterbank;
+std::unique_ptr<Filterbank<double>> filterbank;
 std::unique_ptr<PytorchFrontend> nn;
 std::unique_ptr<ShapeFFT> fft;
 
@@ -258,7 +258,7 @@ bool setup(BelaContext *context, void *userData)
     fprintf(stdout, "Project name: %s\n", context->projectName);
 
     // Initialize filter
-    filterbank = std::make_unique<Filterbank>();
+    filterbank = std::make_unique<Filterbank<double>>();
     filterbank->setup(32, 1);
 
     // Initialize Pytorch frontend
@@ -301,15 +301,16 @@ void render(BelaContext *context, void *userData)
 {
     for(unsigned int n = 0; n < context->audioFrames; n++)
     {
-        float out = 0;
+        float out = 0.0F;
+        double in = 0.0;
 
         if (g_impulse)
         {
-            out = 0.9;
+            in = 0.9;
             g_impulse = false;
         }
 
-        out = static_cast<float>(filterbank->tick(out));
+        out = static_cast<float>(filterbank->tick(in));
 
         // Loop over each audio channel
         for (unsigned int ch = 0; ch < context->audioOutChannels; ch++)
@@ -322,7 +323,12 @@ void render(BelaContext *context, void *userData)
     // we can probably do this also with pipes
     if (gNewCoefficients)
     {
-        filterbank->setCoefficients(nn->coefficients);
+        std::vector<double> coefficients(
+            nn->coefficients.begin(),
+            nn->coefficients.end()
+        );
+
+        filterbank->setCoefficients(coefficients);
         gNewCoefficients = false;
     }
 }

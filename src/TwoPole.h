@@ -9,12 +9,24 @@ template <typename T>
 class TwoPole
 {
 public:
-    TwoPole() {}
+    TwoPole()
+    : m_s0(0.0F)
+    , m_s1(0.0F)
+    {
+        for (int i = 0; i < N_COEFFICIENTS_TWO_POLE; i++)
+        {
+            m_coeff[i] = 0.0F;
+        }
+    }
 
     void cleanup()
     {
-        m_s0 = 0.0;
-        m_s1 = 0.0;
+        m_s0 = 0.0F;
+        m_s1 = 0.0F;
+        for (int i = 0; i < N_COEFFICIENTS_TWO_POLE; i++)
+        {
+            m_coeff[i] = 0.0F;
+        }
     }
 
     void set_coefficients(T b0, T b1, T b2, T a1, T a2)
@@ -59,7 +71,7 @@ public:
 
     T get_coefficient(unsigned int index) { return m_coeff[index]; }
 
-    T process(T x)
+    T process(const T x)
     {
         T y = m_coeff[2] * x + m_s0;
         m_s0 = m_coeff[3] * x - m_coeff[0] * y + m_s1;
@@ -70,7 +82,7 @@ public:
     std::string to_string()
     {
         std::stringstream ss;
-        ss << "a0: " << m_coeff[0] << " a2: " << m_coeff[1]
+        ss << "a1: " << m_coeff[0] << " a2: " << m_coeff[1]
            << " b0: " << m_coeff[2] << " b1: " << m_coeff[3]
            << " b2: " << m_coeff[4];
         return ss.str();
@@ -78,7 +90,8 @@ public:
 
     unsigned int get_n_coefficients() { return N_COEFFICIENTS_TWO_POLE; }
 
-private:
     T m_coeff[N_COEFFICIENTS_TWO_POLE];  // a1, a2, b0, b1, b2
-    T m_s0, m_s1 = 0.0f;
+private:
+    T m_s0;
+    T m_s1;
 };

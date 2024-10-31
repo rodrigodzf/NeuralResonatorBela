@@ -26,11 +26,11 @@ private:
     void printDebug();
     torch::TensorOptions options;
 
-    std::vector<torch::jit::IValue> scaling_inputs;
 
 
 public:
     std::vector<float> coefficients;
+    std::vector<torch::jit::IValue> scaling_inputs;
 
 public:
     PytorchFrontend();
