@@ -1,5 +1,5 @@
 // src
-import type { Point, Polygon } from './types'
+import type { Point, Polygon } from './types.d.ts'
 
 export function generateConvexPolygon(N: Readonly<number>): Polygon {
 	/*

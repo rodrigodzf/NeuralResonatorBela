@@ -1,6 +1,6 @@
 // src
-import { isPointOnLine, lineIntersection } from './lines'
-import type { Line, Point, Polygon } from './types'
+import { isPointOnLine, lineIntersection } from './lines.ts'
+import type { Line, Point, Polygon } from './types.d.ts'
 
 type _Point = NonNullable<Point>
 
@@ -41,7 +41,10 @@ export function isPointInsidePolygon(p: Readonly<Point>, P: Readonly<Polygon>): 
 
 	const N: number = P.length
 	// create a ray that extends to the right of the polygon
-	const ray: Line = [p, { x: P.reduce((max: number, a: Point) => Math.max(max, a.x), -Infinity) + 1, y: p.y }]
+	const ray: Line = [
+		p,
+		{ x: P.reduce((max: number, a: Point) => Math.max(max, a.x), Number.NEGATIVE_INFINITY) + 1, y: p.y },
+	]
 	// count the number of times the ray is intersected
 	let count = 0
 	for (let n = 0; n < N; n++) {

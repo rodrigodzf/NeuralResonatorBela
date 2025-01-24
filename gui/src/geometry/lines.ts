@@ -1,5 +1,5 @@
 // src
-import type { Line, Point } from './types'
+import type { Line, Point } from './types.d.ts'
 
 export function isColinear(a: Readonly<Point>, b: Readonly<Point>, c: Readonly<Point>): boolean {
 	/*
@@ -53,7 +53,8 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 	// search for shared vertices
 	if ((A[0].x === B[0].x && A[0].y === B[0].y) || (A[0].x === B[1].x && A[0].y === B[1].y)) {
 		return ['vertex', A[0]]
-	} else if ((A[1].x === B[0].x && A[1].y === B[0].y) || (A[1].x === B[1].x && A[1].y === B[1].y)) {
+	}
+	if ((A[1].x === B[0].x && A[1].y === B[0].y) || (A[1].x === B[1].x && A[1].y === B[1].y)) {
 		return ['vertex', A[1]]
 	}
 	// test for colinear cases.
@@ -83,11 +84,14 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 			// test for adjacent case
 			if (A[0].x === p.x && A[0].y === p.y) {
 				return ['adjacent', A[0]]
-			} else if (A[1].x === p.x && A[1].y === p.y) {
+			}
+			if (A[1].x === p.x && A[1].y === p.y) {
 				return ['adjacent', A[1]]
-			} else if (B[0].x === p.x && B[0].y === p.y) {
+			}
+			if (B[0].x === p.x && B[0].y === p.y) {
 				return ['adjacent', B[0]]
-			} else if (B[1].x === p.x && B[1].y === p.y) {
+			}
+			if (B[1].x === p.x && B[1].y === p.y) {
 				return ['adjacent', B[1]]
 			}
 			// return general case

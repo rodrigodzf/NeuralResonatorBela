@@ -2,7 +2,7 @@
 export the Bela API as an instantiated object
 */
 
-import BelaData from './BelaData'
+import BelaData from './BelaData.js'
 
 const Bela = new BelaData(5555, 'gui_data', 'bela.local')
 

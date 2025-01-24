@@ -10,8 +10,8 @@ import {
 	normalisePolygon,
 	isPointInsidePolygon,
 	isSimple,
-} from '../geometry'
-import { Vertex } from './vertex'
+} from '../geometry/index.ts'
+import { Vertex } from './vertex.tsx'
 
 export const Drum: FC<{
 	N?: number
@@ -34,6 +34,7 @@ export const Drum: FC<{
 	const [strike, updateStrike] = useState<Point>({ x: 0.5, y: 0.5 })
 
 	// /* eslint-disable react-hooks/exhaustive-deps */
+	// biome-ignore lint/correctness/useExhaustiveDependencies: this useEffect currently only needs to run once one load
 	useEffect(() => {
 		onPolygonChange(polygon)
 		onStrikeChange(strike)
@@ -43,6 +44,7 @@ export const Drum: FC<{
 	return (
 		<div className='drum'>
 			<svg version='1.1' x='0px' y='0px' viewBox='0 0 100 100' xmlSpace='preserve'>
+				<title>Geometric Drum</title>
 				<polygon
 					points={polygon.map((p: Point) => `${(p.x * 100).toString()},${(p.y * 100).toString()}`).join(' ')}
 				/>

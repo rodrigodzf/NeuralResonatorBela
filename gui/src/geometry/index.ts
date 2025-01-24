@@ -1,6 +1,6 @@
-export { generateConvexPolygon } from './generate_polygon'
-export { isColinear, lineIntersection } from './lines'
-export { normalisePolygon } from './morphisms'
-export { isConvex, isPointInsidePolygon, isSimple, largestVector } from './polygon_properties'
+export { generateConvexPolygon } from './generate_polygon.ts'
+export { isColinear, lineIntersection } from './lines.ts'
+export { normalisePolygon } from './morphisms.ts'
+export { isConvex, isPointInsidePolygon, isSimple, largestVector } from './polygon_properties.ts'
 
-export type { Point, Polygon, Line } from './types'
+export type { Point, Polygon, Line } from './types.d.ts'

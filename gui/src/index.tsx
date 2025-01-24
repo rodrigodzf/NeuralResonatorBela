@@ -2,7 +2,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 // src
-import App from './components/App'
+import App from './components/App.tsx'
 
 createRoot(document.getElementById('root') as NonNullable<HTMLDivElement>).render(
 	<StrictMode>

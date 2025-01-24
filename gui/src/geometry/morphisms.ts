@@ -1,5 +1,5 @@
 // src
-import type { Point, Polygon } from './types'
+import type { Point, Polygon } from './types.d.ts'
 
 export function normalisePolygon(P: Polygon): Polygon {
 	/*
@@ -19,6 +19,7 @@ export function normalisePolygon(P: Polygon): Polygon {
 	// center along x and y axes
 	const x_shift: number = (x_min_max[0] + x_min_max[1]) / 2
 	const y_shift: number = (y_min_max[0] + y_min_max[1]) / 2
+	// biome-ignore lint/style/noParameterAssign: mutability is used here to reduce memory usage
 	P = P.map((p: Point) => {
 		return { x: p.x - x_shift, y: p.y - y_shift }
 	})

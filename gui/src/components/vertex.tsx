@@ -1,7 +1,7 @@
 // dependencies
 import { type FC, useEffect, useRef, useState } from 'react'
 
-import type { Point } from '../geometry'
+import type { Point } from '../geometry/index.ts'
 
 export const Vertex: FC<{
 	point: Point

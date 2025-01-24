@@ -4,9 +4,9 @@ import { type JSX, useEffect, useState } from 'react'
 
 // src
 import '../scss/App.scss'
-import Bela from '../BelaAPI'
-import type { Point, Polygon } from '../geometry'
-import { Drum } from './drum'
+import Bela from '../BelaAPI/index.ts'
+import type { Point, Polygon } from '../geometry/index.ts'
+import { Drum } from './drum.tsx'
 
 export default function App(): JSX.Element {
 	// is the Bela ws connected?

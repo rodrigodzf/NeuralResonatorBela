@@ -9,6 +9,7 @@
 		"sass-embedded": "^1.83.4"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
 		"@eslint/js": "^9.18.0",
 		"@types/node": "^22.10.10",
 		"@types/react": "^19.0.8",
@@ -27,8 +28,8 @@
 		"build": "tsc && vite build",
 		"dev": "vite --host",
 		"preview": "vite preview",
-		"format": "prettier --write .",
-		"test": "tsc && eslint . && stylelint **/*.scss"
+		"format": "biome format --write && prettier --write *.html ./**/*.md ./**/*.scss",
+		"test": "tsc && biome lint && eslint . && stylelint **/*.scss"
 	},
 	"prettier": {
 		"arrowParens": "always",
