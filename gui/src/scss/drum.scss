@@ -1,17 +1,19 @@
+@use './utils.scss' as utils;
+
 .drum {
 	height: calc(min(100dvh, 100dvw) - 10px);
 	width: calc(min(100dvh, 100dvw) - 10px);
 	position: relative;
-	background-color: $background;
-	border: 5px solid $background;
+	background-color: utils.$background;
+	border: 5px solid utils.$background;
 
 	svg {
 		height: 100%;
 		width: 100%;
 
 		polygon {
-			fill: $foreground;
-			stroke: $black;
+			fill: utils.$foreground;
+			stroke: utils.$black;
 			stroke-width: 0.2;
 		}
 	}
@@ -22,11 +24,11 @@
 		position: absolute;
 		z-index: 10;
 		border-radius: 10px;
-		background: radial-gradient(white 0%, $accent 60%);
+		background: radial-gradient(white 0%, utils.$accent 60%);
 		cursor: pointer !important;
 	}
 
 	.strike {
-		background: radial-gradient(#303030 0%, $black 50%);
+		background: radial-gradient(#303030 0%, utils.$black 50%);
 	}
 }

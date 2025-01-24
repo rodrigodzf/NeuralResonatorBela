@@ -29,15 +29,17 @@
 		// javascript support
 		"allowJs": true,
 		// interop constraints
+		"allowImportingTsExtensions": true,
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"isolatedModules": true,
 		// language and environment
 		"jsx": "react-jsx",
-		"lib": ["dom", "dom.iterable", "ESNext"],
+		"lib": ["DOM", "DOM.iterable", "ESNext"],
 		"target": "ESNext",
-		// completeness
+		// compilation
+		"importHelpers": true,
 		"skipLibCheck": true
 	},
 	"include": ["src"],

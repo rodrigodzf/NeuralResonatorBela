@@ -2,6 +2,7 @@
 import { type FC, useEffect, useState } from 'react'
 
 // src
+import '../scss/drum.scss'
 import {
 	type Point,
 	type Polygon,
