@@ -12,6 +12,7 @@ body {
 	text-size-adjust: 100%;
 	color: white;
 	background-color: utils.$black;
+	touch-action: none !important;
 	user-select: none !important;
 	-webkit-user-select: none !important;
 }

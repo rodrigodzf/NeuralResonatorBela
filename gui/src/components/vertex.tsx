@@ -1,6 +1,7 @@
 // dependencies
 import { type FC, useEffect, useRef, useState } from 'react'
 
+// src
 import type { Point } from '../geometry/index.ts'
 
 export const Vertex: FC<{
@@ -13,11 +14,10 @@ export const Vertex: FC<{
 	*/
 
 	const self = useRef<HTMLDivElement>(null)
-	// handle movement of points
 	const [mouse_down, setMouseDown] = useState<boolean>(false)
 	useEffect(() => {
 		// update the location of a point and fire callback
-		function updatePoint(e: MouseEvent, callback: boolean): void {
+		function updatePoint(e: PointerEvent, callback: boolean): void {
 			if (mouse_down && self.current?.parentElement) {
 				const parent = self.current.parentElement.getBoundingClientRect()
 				if (
@@ -37,20 +37,19 @@ export const Vertex: FC<{
 			}
 		}
 		// change position if mouse is down
-		function changePosition(e: MouseEvent): void {
+		function changePosition(e: PointerEvent) {
 			updatePoint(e, false)
 		}
 		// release mouse and fire callback if mouse down
-		function releasePoint(e: MouseEvent): void {
+		function releasePoint(e: PointerEvent) {
 			updatePoint(e, true)
 			setMouseDown(false)
 		}
-		// listeners
-		window.addEventListener('mousemove', changePosition)
-		window.addEventListener('mouseup', releasePoint)
+		window.addEventListener('pointermove', changePosition)
+		window.addEventListener('pointerup', releasePoint)
 		return () => {
-			window.removeEventListener('mousemove', changePosition)
-			window.removeEventListener('mouseup', releasePoint)
+			window.removeEventListener('pointermove', changePosition)
+			window.removeEventListener('pointerup', releasePoint)
 		}
 	}, [mouse_down, onDrag])
 
@@ -59,10 +58,11 @@ export const Vertex: FC<{
 			ref={self}
 			className={`vertex ${className}`}
 			style={{
-				top: `calc(${(point.y * 100).toString()}% - 5px)`,
 				left: `calc(${(point.x * 100).toString()}% - 5px)`,
+				top: `calc(${(point.y * 100).toString()}% - 5px)`,
 			}}
-			onMouseDown={() => {
+			onPointerDown={(e) => {
+				self.current?.setPointerCapture(e.pointerId)
 				setMouseDown(true)
 			}}
 		/>
