@@ -1,3 +1,6 @@
+// biome-ignore-all lint/correctness/useExhaustiveDependencies : this rule is broken to run a useEffect _only_ on component mount
+// biome-ignore-all lint/nursery/noJsxPropsBind : here prop bindings are used alongside Aray.map()
+
 // dependencies
 import { type FC, useEffect, useState } from 'react'
 
@@ -26,20 +29,27 @@ export const Drum: FC<{
 		/* */
 	},
 }) => {
+	// state variables
 	const [polygon, updatePolygon] = useState<Polygon>(
-		normalisePolygon(generateConvexPolygon(N)).map((p: Point) => {
-			return { x: p.x * 0.8 + 0.1, y: p.y * 0.8 + 0.1 }
-		}),
+		normalisePolygon(generateConvexPolygon(N)).map((p: Point) => ({ x: p.x * 0.8 + 0.1, y: p.y * 0.8 + 0.1 })),
 	)
 	const [strike, updateStrike] = useState<Point>({ x: 0.5, y: 0.5 })
 
-	// /* eslint-disable react-hooks/exhaustive-deps */
-	// biome-ignore lint/correctness/useExhaustiveDependencies: this useEffect currently only needs to run once one load
+	// update callbacks on component mount
 	useEffect(() => {
 		onPolygonChange(polygon)
 		onStrikeChange(strike)
 	}, [])
-	// /* eslint-enable react-hooks/exhaustive-deps */
+
+	// event handlers
+	const _onStrikeDrag = (p: Point, callback: boolean) => {
+		if (isPointInsidePolygon(p, polygon)) {
+			updateStrike(p)
+			if (callback) {
+				onStrikeChange(p)
+			}
+		}
+	}
 
 	return (
 		<div className='drum'>
@@ -52,7 +62,6 @@ export const Drum: FC<{
 			{polygon.map((p: Point, i: number) => (
 				<Vertex
 					key={i.toString()}
-					point={p}
 					onDrag={(v: Point, callback: boolean) => {
 						const tmp: Polygon = [...polygon]
 						tmp[i] = v
@@ -63,20 +72,10 @@ export const Drum: FC<{
 							}
 						}
 					}}
+					point={p}
 				/>
 			))}
-			<Vertex
-				className='strike'
-				point={strike}
-				onDrag={(p: Point, callback: boolean) => {
-					if (isPointInsidePolygon(p, polygon)) {
-						updateStrike(p)
-						if (callback) {
-							onStrikeChange(p)
-						}
-					}
-				}}
-			/>
+			<Vertex className='strike' onDrag={_onStrikeDrag} point={strike} />
 		</div>
 	)
 }

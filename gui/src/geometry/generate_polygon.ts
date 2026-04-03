@@ -21,27 +21,25 @@ export function generateConvexPolygon(N: Readonly<number>): Polygon {
 	let last_true = 0
 	let last_false = 0
 	// divide the interior points into two chains
-	for (let i = 1; i < N; i++) {
-		if (i !== N - 1) {
-			if (Math.round(Math.random())) {
-				X[i] = (X_rand[i] as NonNullable<number>) - (X_rand[last_true] as NonNullable<number>)
-				Y[i] = (Y_rand[i] as NonNullable<number>) - (Y_rand[last_true] as NonNullable<number>)
-				last_true = i
-			} else {
-				X[i] = (X_rand[last_false] as NonNullable<number>) - (X_rand[i] as NonNullable<number>)
-				Y[i] = (Y_rand[last_false] as NonNullable<number>) - (Y_rand[i] as NonNullable<number>)
-				last_false = i
-			}
-		} else {
+	for (let i = 1; i < N; i += 1) {
+		if (i === N - 1) {
 			X[0] = (X_rand[i] as NonNullable<number>) - (X_rand[last_true] as NonNullable<number>)
 			Y[0] = (Y_rand[i] as NonNullable<number>) - (Y_rand[last_true] as NonNullable<number>)
 			X[i] = (X_rand[last_false] as NonNullable<number>) - (X_rand[i] as NonNullable<number>)
 			Y[i] = (Y_rand[last_false] as NonNullable<number>) - (Y_rand[i] as NonNullable<number>)
+		} else if (Math.round(Math.random())) {
+			X[i] = (X_rand[i] as NonNullable<number>) - (X_rand[last_true] as NonNullable<number>)
+			Y[i] = (Y_rand[i] as NonNullable<number>) - (Y_rand[last_true] as NonNullable<number>)
+			last_true = i
+		} else {
+			X[i] = (X_rand[last_false] as NonNullable<number>) - (X_rand[i] as NonNullable<number>)
+			Y[i] = (Y_rand[last_false] as NonNullable<number>) - (Y_rand[i] as NonNullable<number>)
+			last_false = i
 		}
 	}
 	// randomly combine x and y
 	Y.sort(() => Math.random() - 0.5)
-	for (let i = 0; i < N; i++) {
+	for (let i = 0; i < N; i += 1) {
 		P[i] = { x: X[i] as NonNullable<number>, y: Y[i] as NonNullable<number> }
 	}
 	// sort by polar angle
@@ -66,7 +64,5 @@ export function generateConvexPolygon(N: Readonly<number>): Polygon {
 	// center around origin
 	const x_shift: number = (x_max - x_min) / 2.0 - x_max
 	const y_shift: number = (y_max - y_min) / 2.0 - y_max
-	return P.map((p: Point) => {
-		return { x: p.x + x_shift, y: p.y + y_shift }
-	})
+	return P.map((p: Point) => ({ x: p.x + x_shift, y: p.y + y_shift }))
 }

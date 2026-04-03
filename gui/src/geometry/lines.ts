@@ -6,7 +6,7 @@ export function isColinear(a: Readonly<Point>, b: Readonly<Point>, c: Readonly<P
 	Determines whether or not a given set of three vertices are colinear.
 	*/
 
-	return (c.y - b.y) * (b.x - a.x) === (b.y - a.y) * (c.x - b.x)
+	return (b.x - a.x) * (c.y - b.y) === (b.y - a.y) * (c.x - b.x)
 }
 
 export function isPointOnLine(p: Readonly<Point>, A: Readonly<Line>) {
@@ -27,7 +27,10 @@ export function isPointOnLine(p: Readonly<Point>, A: Readonly<Line>) {
 	return isColinear(A[0], A[1], p)
 }
 
-export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string, Point] {
+export function lineIntersection(
+	A: Readonly<Line>,
+	B: Readonly<Line>,
+): ['none' | 'intersect' | 'vertex' | 'branch' | 'colinear', Point] {
 	/*
 	This function determines whether a line has an intersection, and returns it's type as well
 	as the point of intersection (if one exists).
@@ -63,8 +66,8 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 			return [
 				'colinear',
 				{
-					x: (A[0].x + A[1].x + B[0].x + B[1].x) / 4,
-					y: (A[0].y + A[1].y + B[0].y + B[1].y) / 4,
+					x: (A[0].x + A[1].x + B[0].x + B[1].x) * 0.25,
+					y: (A[0].y + A[1].y + B[0].y + B[1].y) * 0.25,
 				},
 			]
 		}
@@ -81,18 +84,18 @@ export function lineIntersection(A: Readonly<Line>, B: Readonly<Line>): [string,
 				x: A[0].x + u_A * (A[1].x - A[0].x),
 				y: A[0].y + u_A * (A[1].y - A[0].y),
 			}
-			// test for adjacent case
+			// test for branch case
 			if (A[0].x === p.x && A[0].y === p.y) {
-				return ['adjacent', A[0]]
+				return ['branch', A[0]]
 			}
 			if (A[1].x === p.x && A[1].y === p.y) {
-				return ['adjacent', A[1]]
+				return ['branch', A[1]]
 			}
 			if (B[0].x === p.x && B[0].y === p.y) {
-				return ['adjacent', B[0]]
+				return ['branch', B[0]]
 			}
 			if (B[1].x === p.x && B[1].y === p.y) {
-				return ['adjacent', B[1]]
+				return ['branch', B[1]]
 			}
 			// return general case
 			return ['intersect', p]

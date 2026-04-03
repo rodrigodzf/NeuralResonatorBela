@@ -1,9 +1,12 @@
 {
 	"compilerOptions": {
 		// type checking
+		"allowArbitraryExtensions": false,
+		"allowUmdGlobalAccess": false,
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
 		"alwaysStrict": true,
+		"erasableSyntaxOnly": true,
 		"exactOptionalPropertyTypes": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitAny": true,
@@ -12,35 +15,42 @@
 		"noImplicitThis": true,
 		"noPropertyAccessFromIndexSignature": false,
 		"noUncheckedIndexedAccess": true,
+		"noUncheckedSideEffectImports": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"strict": true,
 		"strictBindCallApply": true,
+		"strictBuiltinIteratorReturn": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
 		"strictPropertyInitialization": true,
+		"useDefineForClassFields": true,
 		"useUnknownInCatchVariables": true,
-		// modules
-		"module": "ESNext",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
 		// emit
+		"composite": true,
 		"noEmit": true,
+		"removeComments": true,
 		// javascript support
+		// THIS IS FALSE ONLY FOR BELA API
 		"allowJs": true,
 		// interop constraints
 		"allowImportingTsExtensions": true,
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"isolatedModules": true,
 		// language and environment
 		"jsx": "react-jsx",
-		"lib": ["DOM", "DOM.iterable", "ESNext"],
+		"lib": ["DOM", "ESNext"],
 		"target": "ESNext",
+		"types": ["node", "react", "react-dom"],
 		// compilation
+		"module": "ESNext",
+		"moduleDetection": "force",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 		"importHelpers": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"verbatimModuleSyntax": true
 	},
 	"include": ["src"],
 	"references": [{ "path": "./tsconfig.node.json" }]

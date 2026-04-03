@@ -1,3 +1,5 @@
+// biome-ignore-all lint/performance/noBarrelFile : this import has been designed as a mutli-file module
+
 export { generateConvexPolygon } from './generate_polygon.ts'
 export { isColinear, lineIntersection } from './lines.ts'
 export { normalisePolygon } from './morphisms.ts'
